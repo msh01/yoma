@@ -1,0 +1,7 @@
+spring:
+  redis:
+    database: 0
+    host: localhost
+    password: 'ytjGqmB49z38'
+    port: 6389
+    timeout: 10000

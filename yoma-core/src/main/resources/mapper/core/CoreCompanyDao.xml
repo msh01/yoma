@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.CoreCompanyDao">
+
+    <sql id="coreCompanyColumns">
+		a.id AS "id",
+		a.company_name AS "companyName",
+		a.parent_id AS "parentId",
+		a.level AS "level",
+		a.cascade_ids AS "cascadeIds",
+		a.company_full_name AS "companyFullName",
+		a.company_region AS "companyRegion",
+		a.contact_name AS "contactName",
+		a.contact_mobile AS "contactMobile",
+		a.company_address AS "companyAddress",
+		a.company_legal AS "companyLegal",
+		a.company_logo AS "companyLogo",
+		a.company_extra AS "companyExtra",
+		a.company_sn AS "companySn"
+	</sql>
+
+    <sql id="coreCompanyJoins">
+    </sql>
+
+    <select id="get" resultType="CoreCompany">
+        SELECT
+        <include refid="coreCompanyColumns"/>
+        FROM core_company a
+        <include refid="coreCompanyJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="CoreCompany">
+        SELECT
+        <include refid="coreCompanyColumns"/>
+        FROM core_company a
+        <include refid="coreCompanyJoins"/>
+        <where>
+
+            <if test="companyName != null    and companyName != ''  ">
+                AND a.company_name LIKE
+                <if test="dbName == 'oracle'">'%'||#{companyName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{companyName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{companyName},'%')</if>
+            </if>
+            <if test="parentId != null     ">
+                AND a.parent_id = #{parentId}
+            </if>
+            <if test="level != null     ">
+                AND a.level = #{level}
+            </if>
+            <if test="cascadeIds != null    and cascadeIds != ''  ">
+                AND a.cascade_ids LIKE
+                <if test="dbName == 'oracle'">'%'||#{cascadeIds}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{cascadeIds}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{cascadeIds},'%')</if>
+            </if>
+            <if test="companyFullName != null    and companyFullName != ''  ">
+                AND a.company_full_name LIKE
+                <if test="dbName == 'oracle'">'%'||#{companyFullName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{companyFullName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{companyFullName},'%')</if>
+            </if>
+            <if test="companyRegion != null     ">
+                AND a.company_region = #{companyRegion}
+            </if>
+            <if test="contactName != null    and contactName != ''  ">
+                AND a.contact_name LIKE
+                <if test="dbName == 'oracle'">'%'||#{contactName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{contactName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{contactName},'%')</if>
+            </if>
+            <if test="contactMobile != null    and contactMobile != ''  ">
+                AND a.contact_mobile LIKE
+                <if test="dbName == 'oracle'">'%'||#{contactMobile}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{contactMobile}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{contactMobile},'%')</if>
+            </if>
+            <if test="companyLegal != null    and companyLegal != ''  ">
+                AND a.company_legal LIKE
+                <if test="dbName == 'oracle'">'%'||#{companyLegal}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{companyLegal}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{companyLegal},'%')</if>
+            </if>
+            <if test="companySn != null    and companySn != ''  ">
+                AND a.company_sn = #{companySn}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO core_company(
+						company_name,
+						parent_id,
+						level,
+						cascade_ids,
+						company_full_name,
+						company_region,
+						contact_name,
+						contact_mobile,
+						company_address,
+						company_legal,
+						company_logo,
+						company_extra,
+						company_sn
+		) VALUES (
+					#{companyName},
+					#{parentId},
+					#{level},
+					#{cascadeIds},
+					#{companyFullName},
+					#{companyRegion},
+					#{contactName},
+					#{contactMobile},
+					#{companyAddress},
+					#{companyLegal},
+					#{companyLogo},
+					#{companyExtra},
+					#{companySn}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO core_company
+        (
+        company_name,
+        parent_id,
+        level,
+        cascade_ids,
+        company_full_name,
+        company_region,
+        contact_name,
+        contact_mobile,
+        company_address,
+        company_legal,
+        company_logo,
+        company_extra,
+        company_sn
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.companyName},
+            #{item.parentId},
+            #{item.level},
+            #{item.cascadeIds},
+            #{item.companyFullName},
+            #{item.companyRegion},
+            #{item.contactName},
+            #{item.contactMobile},
+            #{item.companyAddress},
+            #{item.companyLegal},
+            #{item.companyLogo},
+            #{item.companyExtra},
+            #{item.companySn}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE core_company
+        <set>
+            <if test="companyName != null and companyName != '' ">
+                company_name = #{companyName},
+            </if>
+            <if test="parentId != null  ">
+                parent_id = #{parentId},
+            </if>
+            <if test="level != null  ">
+                level = #{level},
+            </if>
+            <if test="cascadeIds != null and cascadeIds != '' ">
+                cascade_ids = #{cascadeIds},
+            </if>
+            <if test="companyFullName != null and companyFullName != '' ">
+                company_full_name = #{companyFullName},
+            </if>
+            <if test="companyRegion != null  ">
+                company_region = #{companyRegion},
+            </if>
+            <if test="contactName != null and contactName != '' ">
+                contact_name = #{contactName},
+            </if>
+            <if test="contactMobile != null and contactMobile != '' ">
+                contact_mobile = #{contactMobile},
+            </if>
+            <if test="companyAddress != null and companyAddress != '' ">
+                company_address = #{companyAddress},
+            </if>
+            <if test="companyLegal != null and companyLegal != '' ">
+                company_legal = #{companyLegal},
+            </if>
+            <if test="companyLogo != null and companyLogo != '' ">
+                company_logo = #{companyLogo},
+            </if>
+            <if test="companyExtra != null and companyExtra != '' ">
+                company_extra = #{companyExtra},
+            </if>
+            <if test="companySn != null and companySn != '' ">
+                company_sn = #{companySn},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM core_company
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM core_company
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

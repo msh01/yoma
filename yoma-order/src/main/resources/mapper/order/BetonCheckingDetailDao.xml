@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.order.dao.BetonCheckingDetailDao">
+
+    <sql id="betonCheckingDetailColumns">
+        <if test="distinctConStrength != null  ">
+            distinct
+        </if>
+        <choose>
+            <when test="distinctConStrength != null ">
+                distinct a.conStrength AS "conStrength"
+            </when>
+            <otherwise>
+                a.conStrength AS "conStrength",
+                a.id AS "id",
+                a.dataDate AS "dataDate",
+                a.clientId AS "clientId",
+                a.betonClientId AS "betonClientId",
+                a.projectId AS "projectId",
+
+                a.parts AS "parts",
+                a.castType AS "castType",
+                a.realityTon1 AS "realityTon1",
+                a.cubicNum1 AS "cubicNum1",
+                a.mortarTon1 AS "mortarTon1",
+                a.mortarCubicNum1 AS "mortarCubicNum1",
+                a.realityTon2 AS "realityTon2",
+                a.cubicNum2 AS "cubicNum2",
+                a.mortarTon2 AS "mortarTon2",
+                a.mortarCubicNum2 AS "mortarCubicNum2",
+                a.realityTon AS "realityTon",
+                a.cubicNum AS "cubicNum",
+                a.cubicNum01 AS "cubicNum01",
+                a.mortarTon AS "mortarTon",
+                a.mortarCubicNum AS "mortarCubicNum",
+                a.mortarCubicNum01 AS "mortarCubicNum01",
+                a.compCubicNum AS "compCubicNum",
+                a.compMoney AS "compMoney",
+                a.unitPrice1 AS "unitPrice1",
+                a.unitPriceSum1 AS "unitPriceSum1",
+                a.unitSellingPrice1 AS "unitSellingPrice1",
+                a.unitSellingPriceSum1 AS "unitSellingPriceSum1",
+                a.priceMakup1 AS "priceMakup1",
+                a.unitPrice2 AS "unitPrice2",
+                a.unitPriceSum2 AS "unitPriceSum2",
+                a.unitSellingPrice2 AS "unitSellingPrice2",
+                a.unitSellingPriceSum2 AS "unitSellingPriceSum2",
+                a.priceMakup2 AS "priceMakup2",
+                a.checkingNo1 AS "checkingNo1",
+                a.checkingNo2 AS "checkingNo2",
+                a.createTime AS "createTime",
+                a.createId AS "createId",
+                a.updateTime AS "updateTime"
+            </otherwise>
+        </choose>
+
+    </sql>
+
+    <sql id="betonCheckingDetailJoins">
+    </sql>
+
+    <select id="get" resultType="BetonCheckingDetail">
+        SELECT
+        <include refid="betonCheckingDetailColumns"/>
+        FROM t_beton_checking_detail a
+        <include refid="betonCheckingDetailJoins"/>
+        WHERE a.id = #{id}
+    </select>
+    <select id="createBetonCheckingDetail" resultType="BetonCheckingDetail" statementType="CALLABLE">
+
+       <![CDATA[
+
+
+
+
+
+                                                                                call createBetonCheckingDetail(
+                                                                                #{beginDataDate,mode=IN,jdbcType=DATE},
+                                                                                #{endDataDate,mode=IN,jdbcType=DATE},
+                                                                                #{clientId,mode=IN,jdbcType=BIGINT},
+                                                                                #{betonClientId,mode=IN,jdbcType=BIGINT},
+                                                                                #{projectId,mode=IN,jdbcType=BIGINT},
+                                                                                #{createId,mode=IN,jdbcType=BIGINT},
+                                                                                #{type,mode=IN,jdbcType=INTEGER}
+                                                                                )
+                                                                                ;
+
+
+
+
+
+
+]]>
+    </select>
+
+    <select id="findList" resultType="BetonCheckingDetail">
+        SELECT
+        <include refid="betonCheckingDetailColumns"/>
+        FROM t_beton_checking_detail a
+        <include refid="betonCheckingDetailJoins"/>
+        <where>
+
+            <if test="beginDataDate != null and endDataDate != null ">
+                AND a.dataDate BETWEEN #{beginDataDate} AND #{endDataDate}
+            </if>
+            <if test="clientId != null     ">
+                AND a.clientId = #{clientId}
+            </if>
+            <if test="betonClientId != null     ">
+                AND a.betonClientId = #{betonClientId}
+            </if>
+            <if test="projectId != null     ">
+                AND a.projectId = #{projectId}
+            </if>
+            <if test="castType != null     ">
+                AND a.castType = #{castType}
+            </if>
+            <if test="conStrength != null    and conStrength != ''  ">
+                AND a.conStrength = #{conStrength}
+            </if>
+            <if test="checkingNo1 != null    and checkingNo1 != ''  ">
+                AND a.checkingNo1 = #{checkingNo1}
+            </if>
+            <if test="checkingNo2 != null    and checkingNo2 != ''  ">
+                AND a.checkingNo2 = #{checkingNo2}
+            </if>
+            <if test="beginCreateTime != null and endCreateTime != null ">
+                AND a.createTime BETWEEN #{beginCreateTime} AND #{endCreateTime}
+            </if>
+            <if test="createId != null     ">
+                AND a.createId = #{createId}
+            </if>
+            <if test="beginUpdateTime != null and endUpdateTime != null ">
+                AND a.updateTime BETWEEN #{beginUpdateTime} AND #{endUpdateTime}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != '' and  distinctConStrength == null">
+                ${orderBy} a.id desc
+            </when>
+            <when test="distinctConStrength != null  ">
+                a.conStrength
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_beton_checking_detail(
+						dataDate,
+						clientId,
+						betonClientId,
+						projectId,
+						parts,
+						castType,
+						conStrength,
+						realityTon1,
+						cubicNum1,
+						mortarTon1,
+						mortarCubicNum1,
+						realityTon2,
+						cubicNum2,
+						mortarTon2,
+						mortarCubicNum2,
+						realityTon,
+						cubicNum,
+						cubicNum01,
+						mortarTon,
+						mortarCubicNum,
+						mortarCubicNum01,
+						compCubicNum,
+						compMoney,
+						unitPrice1,
+						unitPriceSum1,
+						unitSellingPrice1,
+						unitSellingPriceSum1,
+						priceMakup1,
+						unitPrice2,
+						unitPriceSum2,
+						unitSellingPrice2,
+						unitSellingPriceSum2,
+						priceMakup2,
+						checkingNo1,
+						checkingNo2,
+						createTime,
+						createId,
+						updateTime
+		) VALUES (
+					#{dataDate},
+					#{clientId},
+					#{betonClientId},
+					#{projectId},
+					#{parts},
+					#{castType},
+					#{conStrength},
+					#{realityTon1},
+					#{cubicNum1},
+					#{mortarTon1},
+					#{mortarCubicNum1},
+					#{realityTon2},
+					#{cubicNum2},
+					#{mortarTon2},
+					#{mortarCubicNum2},
+					#{realityTon},
+					#{cubicNum},
+					#{cubicNum01},
+					#{mortarTon},
+					#{mortarCubicNum},
+					#{mortarCubicNum01},
+					#{compCubicNum},
+					#{compMoney},
+					#{unitPrice1},
+					#{unitPriceSum1},
+					#{unitSellingPrice1},
+					#{unitSellingPriceSum1},
+					#{priceMakup1},
+					#{unitPrice2},
+					#{unitPriceSum2},
+					#{unitSellingPrice2},
+					#{unitSellingPriceSum2},
+					#{priceMakup2},
+					#{checkingNo1},
+					#{checkingNo2},
+					#{createTime},
+					#{createId},
+					#{updateTime}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO t_beton_checking_detail
+        (
+        dataDate,
+        clientId,
+        betonClientId,
+        projectId,
+        parts,
+        castType,
+        conStrength,
+        realityTon1,
+        cubicNum1,
+        mortarTon1,
+        mortarCubicNum1,
+        realityTon2,
+        cubicNum2,
+        mortarTon2,
+        mortarCubicNum2,
+        realityTon,
+        cubicNum,
+        cubicNum01,
+        mortarTon,
+        mortarCubicNum,
+        mortarCubicNum01,
+        compCubicNum,
+        compMoney,
+        unitPrice1,
+        unitPriceSum1,
+        unitSellingPrice1,
+        unitSellingPriceSum1,
+        priceMakup1,
+        unitPrice2,
+        unitPriceSum2,
+        unitSellingPrice2,
+        unitSellingPriceSum2,
+        priceMakup2,
+        checkingNo1,
+        checkingNo2,
+        createTime,
+        createId,
+        updateTime
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.dataDate},
+            #{item.clientId},
+            #{item.betonClientId},
+            #{item.projectId},
+            #{item.parts},
+            #{item.castType},
+            #{item.conStrength},
+            #{item.realityTon1},
+            #{item.cubicNum1},
+            #{item.mortarTon1},
+            #{item.mortarCubicNum1},
+            #{item.realityTon2},
+            #{item.cubicNum2},
+            #{item.mortarTon2},
+            #{item.mortarCubicNum2},
+            #{item.realityTon},
+            #{item.cubicNum},
+            #{item.cubicNum01},
+            #{item.mortarTon},
+            #{item.mortarCubicNum},
+            #{item.mortarCubicNum01},
+            #{item.compCubicNum},
+            #{item.compMoney},
+            #{item.unitPrice1},
+            #{item.unitPriceSum1},
+            #{item.unitSellingPrice1},
+            #{item.unitSellingPriceSum1},
+            #{item.priceMakup1},
+            #{item.unitPrice2},
+            #{item.unitPriceSum2},
+            #{item.unitSellingPrice2},
+            #{item.unitSellingPriceSum2},
+            #{item.priceMakup2},
+            #{item.checkingNo1},
+            #{item.checkingNo2},
+            #{item.createTime},
+            #{item.createId},
+            #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE t_beton_checking_detail
+        <set>
+            <if test="dataDate != null  ">
+                dataDate = #{dataDate},
+            </if>
+            <if test="clientId != null  ">
+                clientId = #{clientId},
+            </if>
+            <if test="betonClientId != null  ">
+                betonClientId = #{betonClientId},
+            </if>
+            <if test="projectId != null  ">
+                projectId = #{projectId},
+            </if>
+            <if test="parts != null and parts != '' ">
+                parts = #{parts},
+            </if>
+            <if test="castType != null  ">
+                castType = #{castType},
+            </if>
+            <if test="conStrength != null and conStrength != '' ">
+                conStrength = #{conStrength},
+            </if>
+            <if test="realityTon1 != null  ">
+                realityTon1 = #{realityTon1},
+            </if>
+            <if test="cubicNum1 != null  ">
+                cubicNum1 = #{cubicNum1},
+            </if>
+            <if test="mortarTon1 != null  ">
+                mortarTon1 = #{mortarTon1},
+            </if>
+            <if test="mortarCubicNum1 != null  ">
+                mortarCubicNum1 = #{mortarCubicNum1},
+            </if>
+            <if test="realityTon2 != null  ">
+                realityTon2 = #{realityTon2},
+            </if>
+            <if test="cubicNum2 != null  ">
+                cubicNum2 = #{cubicNum2},
+            </if>
+            <if test="mortarTon2 != null  ">
+                mortarTon2 = #{mortarTon2},
+            </if>
+            <if test="mortarCubicNum2 != null  ">
+                mortarCubicNum2 = #{mortarCubicNum2},
+            </if>
+            <if test="realityTon != null  ">
+                realityTon = #{realityTon},
+            </if>
+            <if test="cubicNum != null  ">
+                cubicNum = #{cubicNum},
+            </if>
+            <if test="cubicNum01 != null  ">
+                cubicNum01 = #{cubicNum01},
+            </if>
+            <if test="mortarTon != null  ">
+                mortarTon = #{mortarTon},
+            </if>
+            <if test="mortarCubicNum != null  ">
+                mortarCubicNum = #{mortarCubicNum},
+            </if>
+            <if test="mortarCubicNum01 != null  ">
+                mortarCubicNum01 = #{mortarCubicNum01},
+            </if>
+            <if test="compCubicNum != null  ">
+                compCubicNum = #{compCubicNum},
+            </if>
+            <if test="compMoney != null  ">
+                compMoney = #{compMoney},
+            </if>
+            <if test="unitPrice1 != null  ">
+                unitPrice1 = #{unitPrice1},
+            </if>
+            <if test="unitPriceSum1 != null  ">
+                unitPriceSum1 = #{unitPriceSum1},
+            </if>
+            <if test="unitSellingPrice1 != null  ">
+                unitSellingPrice1 = #{unitSellingPrice1},
+            </if>
+            <if test="unitSellingPriceSum1 != null  ">
+                unitSellingPriceSum1 = #{unitSellingPriceSum1},
+            </if>
+            <if test="priceMakup1 != null  ">
+                priceMakup1 = #{priceMakup1},
+            </if>
+            <if test="unitPrice2 != null  ">
+                unitPrice2 = #{unitPrice2},
+            </if>
+            <if test="unitPriceSum2 != null  ">
+                unitPriceSum2 = #{unitPriceSum2},
+            </if>
+            <if test="unitSellingPrice2 != null  ">
+                unitSellingPrice2 = #{unitSellingPrice2},
+            </if>
+            <if test="unitSellingPriceSum2 != null  ">
+                unitSellingPriceSum2 = #{unitSellingPriceSum2},
+            </if>
+            <if test="priceMakup2 != null  ">
+                priceMakup2 = #{priceMakup2},
+            </if>
+            <if test="checkingNo1 != null and checkingNo1 != '' ">
+                checkingNo1 = #{checkingNo1},
+            </if>
+            <if test="checkingNo2 != null and checkingNo2 != '' ">
+                checkingNo2 = #{checkingNo2},
+            </if>
+            <if test="createTime != null  ">
+                createTime = #{createTime},
+            </if>
+            <if test="createId != null  ">
+                createId = #{createId},
+            </if>
+            <if test="updateTime != null  ">
+                updateTime = #{updateTime},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_beton_checking_detail
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM t_beton_checking_detail
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

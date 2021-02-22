@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    druid:
+      driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      filters: stat v
+      initial-size: 3
+      max-active: 15
+      max-wait: 5000
+      min-evictable-idle-time-millis: 1800000
+      min-idle: 3
+      stat-view-servlet:
+        reset-enable: false
+        url-pattern: /druid/*
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 90000
+      type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:log4jdbc:mysql://localhost:3307/like?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
+      username: root
+      password: Xbkj2019
+      validation-query: select 1
+      web-stat-filter:
+        exclusions: '*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*'
+        url-pattern: /*

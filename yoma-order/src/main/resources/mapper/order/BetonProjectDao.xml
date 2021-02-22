@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.order.dao.BetonProjectDao">
+
+	<sql id="betonProjectColumns">
+		a.id AS "id",
+		a.clientId AS "clientId",
+		a.betonClientId AS "betonClientId",
+		a.projectERPNo AS "projectERPNo",
+		a.projectName AS "projectName",
+		a.constructionUnit AS "constructionUnit",
+		a.addr AS "addr",
+		a.parts AS "parts",
+		a.conStrength AS "conStrength",
+		a.slump AS "slump",
+		a.castType AS "castType",
+		a.cubicNum AS "cubicNum",
+		a.freight AS "freight",
+		a.state AS "state",
+		a.createTime AS "createTime",
+		a.createId AS "createId",
+		a.createName AS "createName"
+	</sql>
+
+	<sql id="betonProjectJoins">
+	</sql>
+
+	<select id="get" resultType="BetonProject">
+		SELECT
+			<include refid="betonProjectColumns"/>
+		FROM t_beton_project a
+		<include refid="betonProjectJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="BetonProject">
+		SELECT
+			<include refid="betonProjectColumns"/>
+		FROM t_beton_project a
+		<include refid="betonProjectJoins"/>
+		<where>
+
+			<if test="clientId != null     ">
+				AND a.clientId = #{clientId}
+			</if>
+			<if test="betonClientId != null     ">
+				AND a.betonClientId = #{betonClientId}
+			</if>
+			<if test="projectERPNo != null    and projectERPNo != ''  ">
+				AND a.projectERPNo LIKE
+					<if test="dbName == 'oracle'">'%'||#{projectERPNo}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{projectERPNo}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{projectERPNo},'%')</if>
+			</if>
+			<if test="projectName != null    and projectName != ''  ">
+				AND a.projectName LIKE
+					<if test="dbName == 'oracle'">'%'||#{projectName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{projectName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{projectName},'%')</if>
+			</if>
+			<if test="constructionUnit != null    and constructionUnit != ''  ">
+				AND a.constructionUnit = #{constructionUnit}
+			</if>
+			<if test="addr != null    and addr != ''  ">
+				AND a.addr = #{addr}
+			</if>
+			<if test="conStrength != null    and conStrength != ''  ">
+				AND a.conStrength = #{conStrength}
+			</if>
+			<if test="slump != null    and slump != ''  ">
+				AND a.slump = #{slump}
+			</if>
+			<if test="castType != null     ">
+				AND a.castType = #{castType}
+			</if>
+			<if test="beginCreateTime != null and endCreateTime != null ">
+				AND a.createTime BETWEEN #{beginCreateTime} AND #{endCreateTime}
+			</if>
+			<if test="createId != null     ">
+				AND a.createId = #{createId}
+			</if>
+			<if test="createName != null    and createName != ''  ">
+				AND a.createName LIKE
+					<if test="dbName == 'oracle'">'%'||#{createName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{createName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{createName},'%')</if>
+			</if>
+
+			<if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+				AND
+				id IN
+				<foreach collection="batchIdList" item="id" index="index"
+						 open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}  a.id desc
+			</when>
+			<otherwise>
+			a.id desc
+			</otherwise>
+		</choose>
+	</select>
+
+
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO t_beton_project(
+						clientId,
+						betonClientId,
+						projectERPNo,
+						projectName,
+						constructionUnit,
+						addr,
+						parts,
+						conStrength,
+						slump,
+						castType,
+						cubicNum,
+						freight,
+						state,
+						createTime,
+						createId,
+						createName
+		) VALUES (
+					#{clientId},
+					#{betonClientId},
+					#{projectERPNo},
+					#{projectName},
+					#{constructionUnit},
+					#{addr},
+					#{parts},
+					#{conStrength},
+					#{slump},
+					#{castType},
+					#{cubicNum},
+					#{freight},
+					#{state},
+					#{createTime},
+					#{createId},
+					#{createName}
+		)
+	</insert>
+
+<insert id ="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" >
+           INSERT INTO t_beton_project
+           (
+							clientId,
+							betonClientId,
+							projectERPNo,
+							projectName,
+							constructionUnit,
+							addr,
+							parts,
+							conStrength,
+							slump,
+							castType,
+							cubicNum,
+							freight,
+							state,
+							createTime,
+							createId,
+							createName
+           )
+           values
+            <foreach collection ="list" item="item" index= "index" separator =",">
+                (
+						#{item.clientId},
+						#{item.betonClientId},
+						#{item.projectERPNo},
+						#{item.projectName},
+						#{item.constructionUnit},
+						#{item.addr},
+						#{item.parts},
+						#{item.conStrength},
+						#{item.slump},
+						#{item.castType},
+						#{item.cubicNum},
+						#{item.freight},
+						#{item.state},
+						#{item.createTime},
+						#{item.createId},
+						#{item.createName}
+                )
+            </foreach >
+     </insert >
+
+
+
+
+	<update id="update">
+		UPDATE t_beton_project
+			<set>
+							<if test="clientId != null  ">
+								clientId = #{clientId},
+							</if>
+							<if test="betonClientId != null  ">
+								betonClientId = #{betonClientId},
+							</if>
+							<if test="projectERPNo != null and projectERPNo != '' ">
+								projectERPNo = #{projectERPNo},
+							</if>
+							<if test="projectName != null and projectName != '' ">
+								projectName = #{projectName},
+							</if>
+							<if test="constructionUnit != null and constructionUnit != '' ">
+								constructionUnit = #{constructionUnit},
+							</if>
+							<if test="addr != null and addr != '' ">
+								addr = #{addr},
+							</if>
+							<if test="parts != null and parts != '' ">
+								parts = #{parts},
+							</if>
+							<if test="conStrength != null and conStrength != '' ">
+								conStrength = #{conStrength},
+							</if>
+							<if test="slump != null and slump != '' ">
+								slump = #{slump},
+							</if>
+							<if test="castType != null  ">
+								castType = #{castType},
+							</if>
+							<if test="cubicNum != null  ">
+								cubicNum = #{cubicNum},
+							</if>
+							<if test="freight != null  ">
+								freight = #{freight},
+							</if>
+							<if test="state != null  ">
+								state = #{state},
+							</if>
+							<if test="createTime != null  ">
+								createTime = #{createTime},
+							</if>
+							<if test="createId != null  ">
+								createId = #{createId},
+							</if>
+							<if test="createName != null and createName != '' ">
+								createName = #{createName},
+							</if>
+			</set>
+			<where>
+				id = #{id}
+			</where>
+	</update>
+
+	<delete id="delete">
+		DELETE FROM t_beton_project
+		<where>   id = #{id} </where>
+	</delete>
+
+
+	<delete id="batchDelete">
+		DELETE FROM t_beton_project
+		<where>
+			id IN
+			<foreach collection="batchIdList" item="id" index="index"
+					 open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+
+
+
+</mapper>

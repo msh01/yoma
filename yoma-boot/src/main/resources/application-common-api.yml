@@ -1,0 +1,4 @@
+# 萤石云token获取
+api:
+  ys7:
+    token-get: https://open.ys7.com/api/lapp/token/get

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.order.dao.ClientInforDao">
+
+    <sql id="clientInforColumns">
+		a.id AS "id",
+		a.loginAppId AS "loginAppId",
+		a.accType AS "accType",
+		a.companyName AS "companyName",
+		a.contact AS "contact",
+		a.contactTel AS "contactTel",
+		a.contactJob AS "contactJob",
+		a.addr AS "addr",
+		a.ploginAppId AS "ploginAppId",
+		a.role AS "role",
+		a.sysRole AS "sysRole",
+		a.salesmanId AS "salesmanId",
+		a.salesmanName AS "salesmanName",
+		a.createTime AS "createTime",
+		a.updTime AS "updTime"
+	</sql>
+
+    <sql id="clientInforJoins">
+    </sql>
+
+    <select id="get" resultType="ClientInfor">
+        SELECT
+        <include refid="clientInforColumns"/>
+        FROM t_client_infor a
+        <include refid="clientInforJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="ClientInfor">
+        SELECT
+        <include refid="clientInforColumns"/>
+        FROM t_client_infor a
+        <include refid="clientInforJoins"/>
+        <where>
+
+            <if test="loginAppId != null     ">
+                AND a.loginAppId = #{loginAppId}
+            </if>
+            <if test="accType != null     ">
+                AND a.accType = #{accType}
+            </if>
+            AND a.loginAppId = a.ploginAppId
+            <if test="companyName != null    and companyName != ''  ">
+                AND a.companyName LIKE
+                <if test="dbName == 'oracle'">'%'||#{companyName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{companyName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{companyName},'%')</if>
+            </if>
+            <if test="contact != null    and contact != ''  ">
+                AND a.contact LIKE
+                <if test="dbName == 'oracle'">'%'||#{contact}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{contact}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{contact},'%')</if>
+            </if>
+            <if test="contactTel != null    and contactTel != ''  ">
+                AND a.contactTel LIKE
+                <if test="dbName == 'oracle'">'%'||#{contactTel}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{contactTel}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{contactTel},'%')</if>
+            </if>
+            <if test="contactJob != null    and contactJob != ''  ">
+                AND a.contactJob = #{contactJob}
+            </if>
+            <if test="ploginAppId != null     ">
+                AND a.ploginAppId = #{ploginAppId}
+            </if>
+            <if test="role != null    and role != ''  ">
+                AND a.role = #{role}
+            </if>
+            <if test="sysRole != null    and sysRole != ''  ">
+                AND a.sysRole = #{sysRole}
+            </if>
+            <if test="salesmanId != null     ">
+                AND a.salesmanId = #{salesmanId}
+            </if>
+            <if test="salesmanName != null    and salesmanName != ''  ">
+                AND a.salesmanName LIKE
+                <if test="dbName == 'oracle'">'%'||#{salesmanName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{salesmanName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{salesmanName},'%')</if>
+            </if>
+            <if test="beginCreateTime != null and endCreateTime != null ">
+                AND a.createTime BETWEEN #{beginCreateTime} AND #{endCreateTime}
+            </if>
+            <if test="beginUpdTime != null and endUpdTime != null ">
+                AND a.updTime BETWEEN #{beginUpdTime} AND #{endUpdTime}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_client_infor(
+						loginAppId,
+						accType,
+						companyName,
+						contact,
+						contactTel,
+						contactJob,
+						addr,
+						ploginAppId,
+						role,
+						sysRole,
+						salesmanId,
+						salesmanName,
+						createTime,
+						updTime
+		) VALUES (
+					#{loginAppId},
+					#{accType},
+					#{companyName},
+					#{contact},
+					#{contactTel},
+					#{contactJob},
+					#{addr},
+					#{ploginAppId},
+					#{role},
+					#{sysRole},
+					#{salesmanId},
+					#{salesmanName},
+					#{createTime},
+					#{updTime}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO t_client_infor
+        (
+        loginAppId,
+        accType,
+        companyName,
+        contact,
+        contactTel,
+        contactJob,
+        addr,
+        ploginAppId,
+        role,
+        sysRole,
+        salesmanId,
+        salesmanName,
+        createTime,
+        updTime
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.loginAppId},
+            #{item.accType},
+            #{item.companyName},
+            #{item.contact},
+            #{item.contactTel},
+            #{item.contactJob},
+            #{item.addr},
+            #{item.ploginAppId},
+            #{item.role},
+            #{item.sysRole},
+            #{item.salesmanId},
+            #{item.salesmanName},
+            #{item.createTime},
+            #{item.updTime}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE t_client_infor
+        <set>
+            <if test="loginAppId != null  ">
+                loginAppId = #{loginAppId},
+            </if>
+            <if test="accType != null  ">
+                accType = #{accType},
+            </if>
+            <if test="companyName != null and companyName != '' ">
+                companyName = #{companyName},
+            </if>
+            <if test="contact != null and contact != '' ">
+                contact = #{contact},
+            </if>
+            <if test="contactTel != null and contactTel != '' ">
+                contactTel = #{contactTel},
+            </if>
+            <if test="contactJob != null and contactJob != '' ">
+                contactJob = #{contactJob},
+            </if>
+            <if test="addr != null and addr != '' ">
+                addr = #{addr},
+            </if>
+            <if test="ploginAppId != null  ">
+                ploginAppId = #{ploginAppId},
+            </if>
+            <if test="role != null and role != '' ">
+                role = #{role},
+            </if>
+            <if test="sysRole != null and sysRole != '' ">
+                sysRole = #{sysRole},
+            </if>
+            <if test="salesmanId != null  ">
+                salesmanId = #{salesmanId},
+            </if>
+            <if test="salesmanName != null and salesmanName != '' ">
+                salesmanName = #{salesmanName},
+            </if>
+            <if test="createTime != null  ">
+                createTime = #{createTime},
+            </if>
+            <if test="updTime != null  ">
+                updTime = #{updTime},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_client_infor
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM t_client_infor
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

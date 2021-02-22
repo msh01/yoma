@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.CoreMobileDao">
+
+    <sql id="coreMobileColumns">
+		a.id AS "id",
+		a.os_type AS "osType",
+		a.registration_id AS "registrationId",
+		a.huawei_push_token AS "huaweiPushToken",
+		a.ip AS "ip",
+		a.last_login_account AS "lastLoginAccount",
+		a.last_login_time AS "lastLoginTime",
+		a.imei AS "imei",
+		a.device_token AS "deviceToken",
+		a.device_brand AS "deviceBrand",
+		a.idfa AS "idfa",
+		a.ios_uuid AS "iosUuid"
+	</sql>
+
+    <sql id="coreMobileJoins">
+	LEFT JOIN core_account ac ON a.last_login_account = ac.id
+	LEFT JOIN core_account_project ap ON ac.current_account_project = ap.id
+	LEFT JOIN prj_project p ON p.id = ap.project_id
+	</sql>
+
+    <select id="get" resultType="CoreMobile">
+        SELECT
+        <include refid="coreMobileColumns"/>
+        FROM core_mobile a
+        <include refid="coreMobileJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="CoreMobile">
+        SELECT
+        <include refid="coreMobileColumns"/>
+        FROM core_mobile a
+        <include refid="coreMobileJoins"/>
+        <where>
+
+            <if test="osType != null    and osType != ''  ">
+                AND a.os_type = #{osType}
+            </if>
+            <if test="deviceBrand != null    and deviceBrand != ''  ">
+                AND a.device_brand = #{deviceBrand}
+            </if>
+            <if test="registrationId != null    and registrationId != ''  ">
+                AND a.registration_id = #{registrationId}
+            </if>
+            <if test="huaweiPushToken != null    and huaweiPushToken != ''  ">
+                AND a.huawei_push_token = #{huaweiPushToken}
+            </if>
+            <if test="projectId != null   ">
+                AND p.id = #{projectId}
+            </if>
+            <if test="accountProjectId != null   ">
+                AND ap.id = #{accountProjectId}
+            </if>
+            <if test="lastLoginAccount != null     ">
+                AND a.last_login_account = #{lastLoginAccount}
+            </if>
+            <if test="beginLastLoginTime != null and endLastLoginTime != null ">
+                AND a.last_login_time BETWEEN #{beginLastLoginTime} AND #{endLastLoginTime}
+            </if>
+            <if test="imei != null    and imei != ''  ">
+                AND a.imei = #{imei}
+            </if>
+            <if test="deviceToken != null    and deviceToken != ''  ">
+                AND a.device_token = #{deviceToken}
+            </if>
+            <if test="idfa != null    and idfa != ''  ">
+                AND a.idfa = #{idfa}
+            </if>
+            <if test="iosUuid != null     ">
+                AND a.ios_uuid = #{iosUuid}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO core_mobile(
+						os_type,
+						registration_id,
+						huawei_push_token,
+						ip,
+						last_login_account,
+						last_login_time,
+						imei,
+						device_token,
+						device_brand,
+						idfa,
+						ios_uuid
+		) VALUES (
+					#{osType},
+					#{registrationId},
+					#{huaweiPushToken},
+					#{ip},
+					#{lastLoginAccount},
+					#{lastLoginTime},
+					#{imei},
+					#{deviceToken},
+					#{deviceBrand},
+					#{idfa},
+					#{iosUuid}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO core_mobile
+        (
+        os_type,
+        registration_id,
+        huawei_push_token,
+        ip,
+        last_login_account,
+        last_login_time,
+        imei,
+        device_token,
+        device_brand,
+        idfa,
+        ios_uuid
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.osType},
+            #{item.registrationId},
+            #{item.huaweiPushToken},
+            #{item.ip},
+            #{item.lastLoginAccount},
+            #{item.lastLoginTime},
+            #{item.imei},
+            #{item.deviceToken},
+            #{item.deviceBrand},
+            #{item.idfa},
+            #{item.iosUuid}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE core_mobile
+        <set>
+            <if test="osType != null and osType != '' ">
+                os_type = #{osType},
+            </if>
+            <if test="registrationId != null and registrationId != '' ">
+                registration_id = #{registrationId},
+            </if>
+            <if test="huaweiPushToken != null and huaweiPushToken != '' ">
+                huawei_push_token = #{huaweiPushToken},
+            </if>
+            <if test="ip != null and ip != '' ">
+                ip = #{ip},
+            </if>
+            <if test="lastLoginAccount != null  ">
+                last_login_account = #{lastLoginAccount},
+            </if>
+            <if test="lastLoginTime != null  ">
+                last_login_time = #{lastLoginTime},
+            </if>
+            <if test="imei != null and imei != '' ">
+                imei = #{imei},
+            </if>
+            <if test="deviceToken != null and deviceToken != '' ">
+                device_token = #{deviceToken},
+            </if>
+            <if test="deviceBrand != null and deviceBrand != '' ">
+                device_brand = #{deviceBrand},
+            </if>
+            <if test="idfa != null and idfa != '' ">
+                idfa = #{idfa},
+            </if>
+            <if test="iosUuid != null  ">
+                ios_uuid = #{iosUuid},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM core_mobile
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM core_mobile
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

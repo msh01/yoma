@@ -1,0 +1,11 @@
+spring:
+  redis:
+    database: 0
+    host: 172.16.100.24
+    password: 'ytjGqmB49z38'
+    port: 6389
+    timeout: 20000ms
+    lettuce:
+      pool:
+        #        避免本地调试的时候频繁报连接超时的错  ， 参见 https://juejin.im/post/6844903990090694663
+        max-wait: 20000ms

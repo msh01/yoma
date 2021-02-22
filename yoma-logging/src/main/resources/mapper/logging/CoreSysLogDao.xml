@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.logging.dao.CoreSysLogDao">
+
+	<sql id="coreSysLogColumns">
+		a.id AS "id",
+		a.create_by AS "createBy",
+		a.create_time AS "createTime",
+		a.target AS "target",
+		a.operation AS "operation",
+		a.description AS "description",
+		a.exception_detail AS "exceptionDetail",
+		a.log_code AS "logCode",
+		a.method AS "method",
+		a.params AS "params",
+		a.request_ip AS "requestIp",
+		a.time AS "time",
+		a.account_name AS "accountName",
+		a.address AS "address",
+		a.browser AS "browser"
+	</sql>
+
+	<sql id="coreSysLogJoins">
+	</sql>
+
+	<select id="get" resultType="CoreSysLog">
+		SELECT
+			<include refid="coreSysLogColumns"/>
+		FROM core_sys_log a
+		<include refid="coreSysLogJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="CoreSysLog">
+		SELECT
+			<include refid="coreSysLogColumns"/>
+		FROM core_sys_log a
+		<include refid="coreSysLogJoins"/>
+		<where>
+
+			<if test="createBy != null    ">
+				AND a.create_by = #{createBy}
+			</if>
+			<if test="beginCreateTime != null and endCreateTime != null ">
+				AND a.create_time BETWEEN #{beginCreateTime} AND #{endCreateTime}
+			</if>
+			<if test="target != null    and target != ''  ">
+				AND a.target LIKE
+					<if test="dbName == 'oracle'">'%'||#{target}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{target}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{target},'%')</if>
+			</if>
+			<if test="operation != null    and operation != ''  ">
+				AND a.operation LIKE
+					<if test="dbName == 'oracle'">'%'||#{operation}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{operation}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{operation},'%')</if>
+			</if>
+			<if test="description != null    and description != ''  ">
+				AND a.description LIKE
+					<if test="dbName == 'oracle'">'%'||#{description}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{description}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{description},'%')</if>
+			</if>
+			<if test="exceptionDetail != null    and exceptionDetail != ''  ">
+				AND a.exception_detail LIKE
+					<if test="dbName == 'oracle'">'%'||#{exceptionDetail}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{exceptionDetail}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{exceptionDetail},'%')</if>
+			</if>
+			<if test="logCode != null    and logCode != ''  ">
+				AND a.log_code = #{logCode}
+			</if>
+			<if test="method != null    and method != ''  ">
+				AND a.method LIKE
+					<if test="dbName == 'oracle'">'%'||#{method}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{method}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{method},'%')</if>
+			</if>
+			<if test="requestIp != null    and requestIp != ''  ">
+				AND a.request_ip LIKE
+					<if test="dbName == 'oracle'">'%'||#{requestIp}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{requestIp}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{requestIp},'%')</if>
+			</if>
+			<if test="accountName != null    and accountName != ''  ">
+				AND a.account_name LIKE
+					<if test="dbName == 'oracle'">'%'||#{accountName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{accountName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{accountName},'%')</if>
+			</if>
+			<if test="address != null    and address != ''  ">
+				AND a.address LIKE
+					<if test="dbName == 'oracle'">'%'||#{address}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{address}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{address},'%')</if>
+			</if>
+			<if test="browser != null    and browser != ''  ">
+				AND a.browser LIKE
+					<if test="dbName == 'oracle'">'%'||#{browser}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{browser}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{browser},'%')</if>
+			</if>
+
+			<if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+				AND
+				id IN
+				<foreach collection="batchIdList" item="id" index="index"
+						 open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}  a.id desc
+			</when>
+			<otherwise>
+			a.id desc
+			</otherwise>
+		</choose>
+	</select>
+
+
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO core_sys_log(
+						create_by,
+						create_time,
+						target,
+						operation,
+						description,
+						exception_detail,
+						log_code,
+						method,
+						params,
+						request_ip,
+						time,
+						account_name,
+						address,
+						browser
+		) VALUES (
+					#{createBy},
+					#{createTime},
+					#{target},
+					#{operation},
+					#{description},
+					#{exceptionDetail},
+					#{logCode},
+					#{method},
+					#{params},
+					#{requestIp},
+					#{time},
+					#{accountName},
+					#{address},
+					#{browser}
+		)
+	</insert>
+
+<insert id ="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" >
+           INSERT INTO core_sys_log
+           (
+							create_by,
+							create_time,
+							target,
+							operation,
+							description,
+							exception_detail,
+							log_code,
+							method,
+							params,
+							request_ip,
+							time,
+							account_name,
+							address,
+							browser
+           )
+           values
+            <foreach collection ="list" item="item" index= "index" separator =",">
+                (
+						#{item.createBy},
+						#{item.createTime},
+						#{item.target},
+						#{item.operation},
+						#{item.description},
+						#{item.exceptionDetail},
+						#{item.logCode},
+						#{item.method},
+						#{item.params},
+						#{item.requestIp},
+						#{item.time},
+						#{item.accountName},
+						#{item.address},
+						#{item.browser}
+                )
+            </foreach >
+     </insert >
+
+
+
+
+	<update id="update">
+		UPDATE core_sys_log
+			<set>
+							<if test="createTime != null  ">
+								create_time = #{createTime},
+							</if>
+							<if test="target != null and target != '' ">
+								target = #{target},
+							</if>
+							<if test="operation != null and operation != '' ">
+								operation = #{operation},
+							</if>
+							<if test="description != null and description != '' ">
+								description = #{description},
+							</if>
+							<if test="exceptionDetail != null and exceptionDetail != '' ">
+								exception_detail = #{exceptionDetail},
+							</if>
+							<if test="logCode != null and logCode != '' ">
+								log_code = #{logCode},
+							</if>
+							<if test="method != null and method != '' ">
+								method = #{method},
+							</if>
+							<if test="params != null and params != '' ">
+								params = #{params},
+							</if>
+							<if test="requestIp != null and requestIp != '' ">
+								request_ip = #{requestIp},
+							</if>
+							<if test="time != null  ">
+								time = #{time},
+							</if>
+							<if test="accountName != null and accountName != '' ">
+								account_name = #{accountName},
+							</if>
+							<if test="address != null and address != '' ">
+								address = #{address},
+							</if>
+							<if test="browser != null and browser != '' ">
+								browser = #{browser},
+							</if>
+			</set>
+			<where>
+				id = #{id}
+			</where>
+	</update>
+
+	<delete id="delete">
+		DELETE FROM core_sys_log
+		<where>   id = #{id} </where>
+	</delete>
+
+
+	<delete id="batchDelete">
+		DELETE FROM core_sys_log
+		<where>
+			id IN
+			<foreach collection="batchIdList" item="id" index="index"
+					 open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+
+
+
+</mapper>

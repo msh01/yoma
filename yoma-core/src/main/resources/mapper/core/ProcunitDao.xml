@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.ProcunitDao">
+    
+	<sql id="procunitColumns">
+		a.id AS "id",
+		a.processType AS "processType",
+		a.linkName AS "linkName",
+		a.linkCode AS "linkCode",
+		a.nextLinkName AS "nextLinkName",
+		a.nextLinkCode AS "nextLinkCode",
+		a.puType AS "puType",
+		a.sort AS "sort",
+		a.state AS "state",
+		a.createTime AS "createTime",
+		a.updTime AS "updTime"
+	</sql>
+	
+	<sql id="procunitJoins">
+	</sql>
+    
+	<select id="get" resultType="Procunit">
+		SELECT 
+			<include refid="procunitColumns"/>
+		FROM t_procunit a
+		<include refid="procunitJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Procunit">
+		SELECT 
+			<include refid="procunitColumns"/>
+		FROM t_procunit a
+		<include refid="procunitJoins"/>
+		<where>
+			
+			<if test="processType != null    and processType != ''  ">
+				AND a.processType = #{processType}
+			</if>
+			<if test="linkName != null    and linkName != ''  ">
+				AND a.linkName LIKE 
+					<if test="dbName == 'oracle'">'%'||#{linkName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{linkName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{linkName},'%')</if>
+			</if>
+			<if test="linkCode != null    and linkCode != ''  ">
+				AND a.linkCode = #{linkCode}
+			</if>
+			<if test="nextLinkName != null    and nextLinkName != ''  ">
+				AND a.nextLinkName LIKE 
+					<if test="dbName == 'oracle'">'%'||#{nextLinkName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{nextLinkName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{nextLinkName},'%')</if>
+			</if>
+			<if test="nextLinkCode != null    and nextLinkCode != ''  ">
+				AND a.nextLinkCode = #{nextLinkCode}
+			</if>
+			<if test="puType != null     ">
+				AND a.puType = #{puType}
+			</if>
+			<if test="state != null     ">
+				AND a.state = #{state}
+			</if>
+			<if test="beginCreateTime != null and endCreateTime != null ">
+				AND a.createTime BETWEEN #{beginCreateTime} AND #{endCreateTime}
+			</if>
+			<if test="beginUpdTime != null and endUpdTime != null ">
+				AND a.updTime BETWEEN #{beginUpdTime} AND #{endUpdTime}
+			</if>
+
+			<if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+				AND
+				id IN
+				<foreach collection="batchIdList" item="id" index="index"
+						 open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}  a.id desc
+			</when>
+			<otherwise>
+			a.id desc
+			</otherwise>
+		</choose>
+	</select>
+	
+
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO t_procunit(
+						processType,
+						linkName,
+						linkCode,
+						nextLinkName,
+						nextLinkCode,
+						puType,
+						sort,
+						state,
+						createTime,
+						updTime
+		) VALUES (
+					#{processType},
+					#{linkName},
+					#{linkCode},
+					#{nextLinkName},
+					#{nextLinkCode},
+					#{puType},
+					#{sort},
+					#{state},
+					#{createTime},
+					#{updTime}
+		)
+	</insert>
+	
+<insert id ="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" >
+           INSERT INTO t_procunit
+           (
+							processType,
+							linkName,
+							linkCode,
+							nextLinkName,
+							nextLinkCode,
+							puType,
+							sort,
+							state,
+							createTime,
+							updTime
+           )
+           values
+            <foreach collection ="list" item="item" index= "index" separator =",">
+                (
+						#{item.processType},
+						#{item.linkName},
+						#{item.linkCode},
+						#{item.nextLinkName},
+						#{item.nextLinkCode},
+						#{item.puType},
+						#{item.sort},
+						#{item.state},
+						#{item.createTime},
+						#{item.updTime}
+                )
+            </foreach >
+     </insert >
+	
+	
+	
+	
+	<update id="update">
+		UPDATE t_procunit 
+			<set> 	
+							<if test="processType != null and processType != '' ">
+								processType = #{processType},
+							</if>
+							<if test="linkName != null and linkName != '' ">
+								linkName = #{linkName},
+							</if>
+							<if test="linkCode != null and linkCode != '' ">
+								linkCode = #{linkCode},
+							</if>
+							<if test="nextLinkName != null and nextLinkName != '' ">
+								nextLinkName = #{nextLinkName},
+							</if>
+							<if test="nextLinkCode != null and nextLinkCode != '' ">
+								nextLinkCode = #{nextLinkCode},
+							</if>
+							<if test="puType != null  ">
+								puType = #{puType},
+							</if>
+							<if test="sort != null  ">
+								sort = #{sort},
+							</if>
+							<if test="state != null  ">
+								state = #{state},
+							</if>
+							<if test="createTime != null  ">
+								createTime = #{createTime},
+							</if>
+							<if test="updTime != null  ">
+								updTime = #{updTime},
+							</if>
+			</set>
+			<where>
+				id = #{id}
+			</where>
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM t_procunit
+		<where>   id = #{id} </where>
+	</delete>
+
+
+	<delete id="batchDelete">
+		DELETE FROM t_procunit
+		<where>
+			id IN
+			<foreach collection="batchIdList" item="id" index="index"
+					 open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+
+
+	
+</mapper>

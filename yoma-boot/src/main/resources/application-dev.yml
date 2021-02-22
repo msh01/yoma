@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    include: common-iot-parameter-id,common-api,dev-fastdfs,common-auth,dev-datasource,dev-redis
+# 因为开发和测试走的是同一个库，如果在开发环境不禁用的话，则会出现重复数据;仅在开发调试时可开启
+task:
+  simulator:
+    enabled: false
+  sensor-stat-persist:
+    enabled: false
+  patrol-plan-generate:
+    enabled: false
+  maintain-task-generate:
+    enabled: false
+# 因为开发和测试走的是同一个库，如果在开发环境不禁用的话，则会出现重复数据;仅在开发调试时可开启
+mqtt:
+  receive:
+    enabled: false
+  send:
+    enabled: true
+server:
+  port: 8383
+ftp:
+  root-path: /var/ftp/test/iotconfig/
+last-value-key: lastValueDev
+last-value-analog-key: lastValueAnalogDev
+redis-key-pre:
+  verify-code:
+    register: verify-code-register
+    password-find: verify-code-password-find
+  analog-last-alarm: analog-last-alarm-dev
+

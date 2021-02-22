@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    # 测试环境的访问方式由远程ip改为localhost，节省带宽流量
+    include: common-iot-parameter-id,common-api,test-fastdfs,common-auth,test-datasource,test-redis
+# 因为开发和测试走的是同一个库，如果在开发环境不禁用的话，则会出现重复数据;仅在开发调试时可开启
+server:
+  port: 8282
+task:
+  simulator:
+    enabled: false
+  sensor-stat-persist:
+    enabled: true
+  patrol-plan-generate:
+    enabled: true
+  maintain-task-generate:
+    enabled: true
+# 因为开发和测试走的是同一个库，如果在开发环境不禁用的话，则会出现重复数据;仅在开发调试时可开启
+mqtt:
+  receive:
+    enabled: true
+  send:
+    enabled: true
+ftp:
+  root-path: /var/ftp/test/iotconfig/
+last-value-key: lastValueTest
+last-value-analog-key: lastValueAnalogTest
+redis-key-pre:
+  verify-code:
+    register: verify-code-register
+    password-find: verify-code-password-find
+  analog-last-alarm: analog-last-alarm-test

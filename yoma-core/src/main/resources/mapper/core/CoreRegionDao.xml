@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.CoreRegionDao">
+
+    <sql id="coreRegionColumns">
+		a.region_id AS "regionId",
+		a.parent_id AS "parentId",
+		a.region_name AS "regionName",
+		a.region_type AS "regionType",
+		a.agency_id AS "agencyId",
+		a.cascade_ids AS "cascadeIds"
+	</sql>
+
+    <sql id="coreRegionJoins">
+    </sql>
+
+    <select id="get" resultType="CoreRegion">
+        SELECT
+        <include refid="coreRegionColumns"/>
+        FROM core_region a
+        <include refid="coreRegionJoins"/>
+        WHERE a.region_id = #{id}
+    </select>
+
+    <select id="findList" resultType="CoreRegion">
+        SELECT
+        <include refid="coreRegionColumns"/>
+        FROM core_region a
+        <include refid="coreRegionJoins"/>
+        <where>
+
+            <if test="parentId != null    and parentId != ''  ">
+                AND a.parent_id = #{parentId}
+            </if>
+            <if test="regionName != null    and regionName != ''  ">
+                AND a.region_name LIKE
+                <if test="dbName == 'oracle'">'%'||#{regionName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{regionName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{regionName},'%')</if>
+            </if>
+            <if test="regionType != null     ">
+                AND a.region_type = #{regionType}
+            </if>
+            <if test="cascadeIds != null    and cascadeIds != ''  ">
+                AND a.cascade_ids LIKE
+                <if test="dbName == 'oracle'">'%'||#{cascadeIds}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{cascadeIds}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{cascadeIds},'%')</if>
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO core_region(
+						parent_id,
+						region_name,
+						region_type,
+						agency_id,
+						cascade_ids
+		) VALUES (
+					#{parentId},
+					#{regionName},
+					#{regionType},
+					#{agencyId},
+					#{cascadeIds}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO core_region
+        (
+        parent_id,
+        region_name,
+        region_type,
+        agency_id,
+        cascade_ids
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.parentId},
+            #{item.regionName},
+            #{item.regionType},
+            #{item.agencyId},
+            #{item.cascadeIds}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE core_region
+        <set>
+            <if test="parentId != null and parentId != '' ">
+                parent_id = #{parentId},
+            </if>
+            <if test="regionName != null and regionName != '' ">
+                region_name = #{regionName},
+            </if>
+            <if test="regionType != null  ">
+                region_type = #{regionType},
+            </if>
+            <if test="agencyId != null and agencyId != '' ">
+                agency_id = #{agencyId},
+            </if>
+            <if test="cascadeIds != null and cascadeIds != '' ">
+                cascade_ids = #{cascadeIds},
+            </if>
+        </set>
+        <where>
+            region_id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM core_region
+        <where>region_id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM core_region
+        <where>
+            region_id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

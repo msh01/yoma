@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.CoreAccountDao">
+
+    <sql id="coreAccountColumns">
+		a.id AS "id",
+		a.account_name AS "accountName",
+		a.account_login AS "accountLogin",
+		a.account_pass AS "accountPass",
+		a.account_login_total AS "accountLoginTotal",
+		a.account_login_last AS "accountLoginLast",
+		a.account_login_ip AS "accountLoginIp",
+		a.account_email AS "accountEmail",
+		a.account_mobile AS "accountMobile",
+		a.current_type AS "currentType",
+		a.current_role AS "currentRole",
+		a.current_account_project AS "currentAccountProject",
+		a.account_status AS "accountStatus"
+	</sql>
+
+    <sql id="coreAccountJoins">
+        <choose>
+            <when test="roleType eq 11">
+                LEFT JOIN core_account_role ar ON a.id = ar.account_id
+                left join core_role r on r.id = ar.role_id
+            </when>
+            <when test="roleType eq 22">
+                LEFT JOIN core_account_company ac ON a.id = ac.account_id
+                left join core_role r on r.id = ac.role_id
+                LEFT JOIN core_company c ON c.id = ac.company_id
+            </when>
+            <when test="roleType eq 33">
+                LEFT JOIN core_account_project cp ON a.id = cp.account_id
+                left join core_role r on r.id = cp.role_id
+                LEFT JOIN prj_project p ON cp.project_id = p.id
+            </when>
+        </choose>
+    </sql>
+
+    <select id="get" resultType="CoreAccount">
+        SELECT
+        <include refid="coreAccountColumns"/>
+        FROM core_account a
+        <include refid="coreAccountJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="CoreAccount">
+        SELECT
+        <include refid="coreAccountColumns"/>
+        FROM core_account a
+        <include refid="coreAccountJoins"/>
+        <where>
+
+            <if test="accountName != null    and accountName != ''  ">
+                AND a.account_name LIKE
+                <if test="dbName == 'oracle'">'%'||#{accountName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{accountName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{accountName},'%')</if>
+            </if>
+            <if test="currentType != null     ">
+                AND a.current_type = #{currentType}
+            </if>
+            <if test="currentAccountProject != null     ">
+                AND a.current_account_project = #{currentAccountProject}
+            </if>
+            <if test="currentRole != null     ">
+                AND a.current_role = #{currentRole}
+            </if>
+            <if test="accountLogin != null    and accountLogin != ''  ">
+                AND a.account_login = #{accountLogin}
+            </if>
+            <if test="companyId!= null     ">
+                AND ac.company_id = #{companyId}
+            </if>
+            <if test="projectId != null     ">
+                AND cp.project_id = #{projectId}
+            </if>
+
+            <if test="accountPass != null    and accountPass != ''  ">
+                AND a.account_pass = #{accountPass}
+            </if>
+            <if test="beginAccountLoginLast != null and endAccountLoginLast != null ">
+                AND a.account_login_last BETWEEN #{beginAccountLoginLast} AND #{endAccountLoginLast}
+            </if>
+            <if test="accountMobile != null    and accountMobile != ''  ">
+                AND a.account_mobile LIKE
+                <if test="dbName == 'oracle'">'%'||#{accountMobile}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{accountMobile}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{accountMobile},'%')</if>
+            </if>
+            <if test="accountStatus != null     ">
+                AND a.account_status = #{accountStatus}
+            </if>
+            <if test="roleType != null     ">
+                AND r.role_type = #{roleType}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO core_account(
+						account_name,
+						account_login,
+						account_pass,
+						account_login_total,
+						account_login_last,
+						account_login_ip,
+						account_email,
+						account_mobile,
+						current_type,
+						current_role,
+						current_account_project,
+						account_status
+		) VALUES (
+					#{accountName},
+					#{accountLogin},
+					#{accountPass},
+					#{accountLoginTotal},
+					#{accountLoginLast},
+					#{accountLoginIp},
+					#{accountEmail},
+					#{accountMobile},
+					#{currentType},
+					#{currentRole},
+					#{currentAccountProject},
+					#{accountStatus}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO core_account
+        (
+        account_name,
+        account_login,
+        account_pass,
+        account_login_total,
+        account_login_last,
+        account_login_ip,
+        account_email,
+        account_mobile,
+        current_type,
+        current_role,
+        current_account_project,
+        account_status
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.accountName},
+            #{item.accountLogin},
+            #{item.accountPass},
+            #{item.accountLoginTotal},
+            #{item.accountLoginLast},
+            #{item.accountLoginIp},
+            #{item.accountEmail},
+            #{item.accountMobile},
+            #{item.currentType},
+            #{item.currentRole},
+            #{item.currentAccountProject},
+            #{item.accountStatus}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE core_account
+        <set>
+            <if test="accountName != null and accountName != '' ">
+                account_name = #{accountName},
+            </if>
+            <if test="accountLogin != null and accountLogin != '' ">
+                account_login = #{accountLogin},
+            </if>
+            <if test="accountPass != null and accountPass != '' ">
+                account_pass = #{accountPass},
+            </if>
+            <if test="accountLoginTotal != null  ">
+                account_login_total = #{accountLoginTotal},
+            </if>
+            <if test="accountLoginLast != null  ">
+                account_login_last = #{accountLoginLast},
+            </if>
+            <if test="accountLoginIp != null and accountLoginIp != '' ">
+                account_login_ip = #{accountLoginIp},
+            </if>
+            <if test="accountEmail != null and accountEmail != '' ">
+                account_email = #{accountEmail},
+            </if>
+            <if test="accountMobile != null and accountMobile != '' ">
+                account_mobile = #{accountMobile},
+            </if>
+            <if test="currentType != null  ">
+                current_type = #{currentType},
+            </if>
+            <if test="currentRole != null  ">
+                current_role = #{currentRole},
+            </if>
+            <if test="currentAccountProject != null  ">
+                current_account_project = #{currentAccountProject},
+            </if>
+            <if test="accountStatus != null  ">
+                account_status = #{accountStatus},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM core_account
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM core_account
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

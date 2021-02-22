@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.CoreMenuDao">
+
+    <sql id="coreMenuColumns">
+		a.id AS "id",
+		a.i_frame AS "iFrame",
+		a.name AS "name",
+		a.component AS "component",
+		a.parent_id AS "parentId",
+		a.sort AS "sort",
+		a.icon AS "icon",
+		a.path AS "path",
+		a.cache AS "cache",
+		a.hidden AS "hidden",
+		a.component_name AS "componentName",
+		a.create_time AS "createTime",
+		a.permission AS "permission",
+		a.type AS "type",
+		a.cascade_ids AS "cascadeIds",
+		a.level AS "level"
+	</sql>
+
+    <sql id="coreMenuJoins">
+    </sql>
+
+    <select id="get" resultType="CoreMenu">
+        SELECT
+        <include refid="coreMenuColumns"/>
+        FROM core_menu a
+        <include refid="coreMenuJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="CoreMenu">
+        SELECT
+        <include refid="coreMenuColumns"/>
+        FROM core_menu a
+        <include refid="coreMenuJoins"/>
+        <where>
+
+            <if test="iFrame != null     ">
+                AND a.i_frame = #{iFrame}
+            </if>
+            <if test="name != null    and name != ''  ">
+                AND a.name LIKE
+                <if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+            </if>
+            <if test="parentId != null     ">
+                AND a.parent_id = #{parentId}
+            </if>
+            <if test="hidden != null     ">
+                AND a.hidden = #{hidden}
+            </if>
+            <if test="permission != null    and permission != ''  ">
+                AND a.permission = #{permission}
+            </if>
+            <if test="type != null     ">
+                AND a.type = #{type}
+            </if>
+            <if test="cascadeIds != null    and cascadeIds != ''  ">
+                AND a.cascade_ids LIKE
+                <if test="dbName == 'oracle'">'%'||#{cascadeIds}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{cascadeIds}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{cascadeIds},'%')</if>
+            </if>
+            <if test="level != null    and level != ''  ">
+                AND a.level = #{level}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO core_menu(
+						i_frame,
+						name,
+						component,
+						parent_id,
+						sort,
+						icon,
+						path,
+						cache,
+						hidden,
+						component_name,
+						create_time,
+						permission,
+						type,
+						cascade_ids,
+						level
+		) VALUES (
+					#{iFrame},
+					#{name},
+					#{component},
+					#{parentId},
+					#{sort},
+					#{icon},
+					#{path},
+					#{cache},
+					#{hidden},
+					#{componentName},
+					#{createTime},
+					#{permission},
+					#{type},
+					#{cascadeIds},
+					#{level}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO core_menu
+        (
+        i_frame,
+        name,
+        component,
+        parent_id,
+        sort,
+        icon,
+        path,
+        cache,
+        hidden,
+        component_name,
+        create_time,
+        permission,
+        type,
+        cascade_ids,
+        level
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.iFrame},
+            #{item.name},
+            #{item.component},
+            #{item.parentId},
+            #{item.sort},
+            #{item.icon},
+            #{item.path},
+            #{item.cache},
+            #{item.hidden},
+            #{item.componentName},
+            #{item.createTime},
+            #{item.permission},
+            #{item.type},
+            #{item.cascadeIds},
+            #{item.level}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE core_menu
+        <set>
+            <if test="iFrame != null  ">
+                i_frame = #{iFrame},
+            </if>
+            <if test="name != null and name != '' ">
+                name = #{name},
+            </if>
+            <if test="component != null and component != '' ">
+                component = #{component},
+            </if>
+            <if test="parentId != null  ">
+                parent_id = #{parentId},
+            </if>
+            <if test="sort != null  ">
+                sort = #{sort},
+            </if>
+            <if test="icon != null and icon != '' ">
+                icon = #{icon},
+            </if>
+            <if test="path != null and path != '' ">
+                path = #{path},
+            </if>
+            <if test="cache != null  ">
+                cache = #{cache},
+            </if>
+            <if test="hidden != null  ">
+                hidden = #{hidden},
+            </if>
+            <if test="componentName != null and componentName != '' ">
+                component_name = #{componentName},
+            </if>
+            <if test="createTime != null  ">
+                create_time = #{createTime},
+            </if>
+            <if test="permission != null and permission != '' ">
+                permission = #{permission},
+            </if>
+            <if test="type != null  ">
+                type = #{type},
+            </if>
+            <if test="cascadeIds != null and cascadeIds != '' ">
+                cascade_ids = #{cascadeIds},
+            </if>
+            <if test="level != null and level != '' ">
+                level = #{level},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM core_menu
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM core_menu
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

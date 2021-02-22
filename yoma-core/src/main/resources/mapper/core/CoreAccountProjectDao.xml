@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.CoreAccountProjectDao">
+
+    <sql id="coreAccountProjectColumns">
+		a.project_id AS "projectId",
+		a.account_id AS "accountId",
+		a.role_id AS "roleId",
+
+		acc.account_name AS "accountName",
+		acc.account_login AS "accountLogin",
+		acc.account_pass AS "accountPass",
+		acc.account_login_total AS "accountLoginTotal",
+		acc.account_login_last AS "accountLoginLast",
+		acc.account_login_ip AS "accountLoginIp",
+		acc.account_email AS "accountEmail",
+		acc.account_mobile AS "accountMobile",
+		acc.current_type AS "currentType",
+		acc.current_role AS "currentRole",
+		acc.current_account_project AS "currentAccountProject",
+		acc.account_status AS "accountStatus",
+
+
+        r.role_name roleName,
+        c.project_name projectName ,
+		a.id AS "id"
+	</sql>
+
+    <sql id="coreAccountProjectJoins">
+        LEFT JOIN core_account acc ON a.account_id = acc.id
+        LEFT JOIN core_role r ON a.role_id = r.id
+        LEFT JOIN prj_project c ON a.project_id = c.id
+    </sql>
+
+    <select id="get" resultType="CoreAccountProject">
+        SELECT
+        <include refid="coreAccountProjectColumns"/>
+        FROM core_account_project a
+        <include refid="coreAccountProjectJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="CoreAccountProject">
+        SELECT
+        <include refid="coreAccountProjectColumns"/>
+        FROM core_account_project a
+        <include refid="coreAccountProjectJoins"/>
+        <where>
+
+            <if test="projectId != null     ">
+                AND a.project_id = #{projectId}
+            </if>
+            <if test="accountId != null     ">
+                AND a.account_id = #{accountId}
+            </if>
+            <if test="roleId != null     ">
+                AND a.role_id = #{roleId}
+            </if>
+
+            <choose>
+                <when test="systemRole == 1 ">
+                </when>
+                <when test="systemRole == 0 or systemRole == null  ">
+                    AND r.role_target > 0
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO core_account_project(
+						project_id,
+						account_id,
+						role_id
+		) VALUES (
+					#{projectId},
+					#{accountId},
+					#{roleId}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO core_account_project
+        (
+        project_id,
+        account_id,
+        role_id
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.projectId},
+            #{item.accountId},
+            #{item.roleId}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE core_account_project
+        <set>
+            <if test="projectId != null  ">
+                project_id = #{projectId},
+            </if>
+            <if test="accountId != null  ">
+                account_id = #{accountId},
+            </if>
+            <if test="roleId != null  ">
+                role_id = #{roleId},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM core_account_project
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM core_account_project
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

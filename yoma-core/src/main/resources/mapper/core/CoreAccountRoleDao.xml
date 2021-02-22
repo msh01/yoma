@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.CoreAccountRoleDao">
+
+    <sql id="coreAccountRoleColumns">
+		a.id AS "id",
+		a.account_id AS "accountId",
+		acc.account_name accountName,
+	    r.role_name roleName,
+		a.role_id AS "roleId"
+	</sql>
+
+    <sql id="coreAccountRoleJoins">
+        LEFT JOIN core_account acc ON a.account_id = acc.id
+        LEFT JOIN core_role r ON a.role_id = r.id
+    </sql>
+
+    <select id="get" resultType="CoreAccountRole">
+        SELECT
+        <include refid="coreAccountRoleColumns"/>
+        FROM core_account_role a
+        <include refid="coreAccountRoleJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="CoreAccountRole">
+        SELECT
+        <include refid="coreAccountRoleColumns"/>
+        FROM core_account_role a
+        <include refid="coreAccountRoleJoins"/>
+        <where>
+
+            <if test="accountId != null     ">
+                AND a.account_id = #{accountId}
+            </if>
+            <if test="roleId != null     ">
+                AND a.role_id = #{roleId}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO core_account_role(
+						account_id,
+						role_id
+		) VALUES (
+					#{accountId},
+					#{roleId}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO core_account_role
+        (
+        account_id,
+        role_id
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.accountId},
+            #{item.roleId}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE core_account_role
+        <set>
+            <if test="accountId != null  ">
+                account_id = #{accountId},
+            </if>
+            <if test="roleId != null  ">
+                role_id = #{roleId},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM core_account_role
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM core_account_role
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.stc.dao.StcConfigDao">
+
+	<sql id="stcConfigColumns">
+		a.id AS "id",
+		a.config_name AS "configName",
+		a.config_des AS "configDes",
+		a.config_project AS "configProject",
+		a.config_system AS "configSystem",
+		a.config_icon AS "configIcon",
+		a.config_type AS "configType",
+		a.config_status AS "configStatus"
+	</sql>
+
+	<sql id="stcConfigJoins">
+	</sql>
+
+	<select id="get" resultType="StcConfig">
+		SELECT
+			<include refid="stcConfigColumns"/>
+		FROM stc_config a
+		<include refid="stcConfigJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="StcConfig">
+		SELECT
+			<include refid="stcConfigColumns"/>
+		FROM stc_config a
+		<include refid="stcConfigJoins"/>
+		<where>
+
+			<if test="configName != null    and configName != ''  ">
+				AND a.config_name LIKE
+					<if test="dbName == 'oracle'">'%'||#{configName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{configName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{configName},'%')</if>
+			</if>
+			<if test="configProject != null     ">
+				AND a.config_project = #{configProject}
+			</if>
+			<if test="configSystem != null     ">
+				AND a.config_system = #{configSystem}
+			</if>
+			<if test="configType != null     ">
+				AND a.config_type = #{configType}
+			</if>
+			<if test="configStatus != null     ">
+				AND a.config_status = #{configStatus}
+			</if>
+
+			<if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+				AND
+				id IN
+				<foreach collection="batchIdList" item="id" index="index"
+						 open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}  a.id desc
+			</when>
+			<otherwise>
+			a.id desc
+			</otherwise>
+		</choose>
+	</select>
+
+
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO stc_config(
+						config_name,
+						config_des,
+						config_project,
+						config_system,
+						config_icon,
+						config_type,
+						config_status
+		) VALUES (
+					#{configName},
+					#{configDes},
+					#{configProject},
+					#{configSystem},
+					#{configIcon},
+					#{configType},
+					#{configStatus}
+		)
+	</insert>
+
+<insert id ="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" >
+           INSERT INTO stc_config
+           (
+							config_name,
+							config_des,
+							config_project,
+							config_system,
+							config_icon,
+							config_type,
+							config_status
+           )
+           values
+            <foreach collection ="list" item="item" index= "index" separator =",">
+                (
+						#{item.configName},
+						#{item.configDes},
+						#{item.configProject},
+						#{item.configSystem},
+						#{item.configIcon},
+						#{item.configType},
+						#{item.configStatus}
+                )
+            </foreach >
+     </insert >
+
+
+
+
+	<update id="update">
+		UPDATE stc_config
+			<set>
+							<if test="configName != null and configName != '' ">
+								config_name = #{configName},
+							</if>
+							<if test="configDes != null and configDes != '' ">
+								config_des = #{configDes},
+							</if>
+							<if test="configProject != null  ">
+								config_project = #{configProject},
+							</if>
+							<if test="configSystem != null  ">
+								config_system = #{configSystem},
+							</if>
+							<if test="configIcon != null and configIcon != '' ">
+								config_icon = #{configIcon},
+							</if>
+							<if test="configType != null  ">
+								config_type = #{configType},
+							</if>
+							<if test="configStatus != null  ">
+								config_status = #{configStatus},
+							</if>
+			</set>
+			<where>
+				id = #{id}
+			</where>
+	</update>
+
+	<delete id="delete">
+		DELETE FROM stc_config
+		<where>   id = #{id} </where>
+	</delete>
+
+
+	<delete id="batchDelete">
+		DELETE FROM stc_config
+		<where>
+			id IN
+			<foreach collection="batchIdList" item="id" index="index"
+					 open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+
+
+
+</mapper>

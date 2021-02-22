@@ -1,0 +1,246 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max_allowed_packet=32505856
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Xbkj2019 #设置root 的密码
+    ports:
+      - 3307:3306 # 把容器内的3306端口，映射到容器外部的3308端口
+    volumes:
+      - /mydata/mysql/data/db:/var/lib/mysql #数据文件挂载
+      - /mydata/mysql/data/conf:/etc/mysql/conf.d #配置文件挂载
+      - /mydata/mysql/log:/var/log/mysql #日志文件挂载
+  redis:
+    image: redis:6.0-rc3
+    container_name: redis
+    command: redis-server --appendonly yes --requirepass ytjGqmB49z38
+    restart: always
+    volumes:
+      - /mydata/redis/data:/data #数据文件挂载
+    ports:
+      - 6389:6379
+    #需要拷贝nginx配置文件，否则挂载时会因为没有配置文件而启动失败。
+  #    nginx:
+  #      build:
+  #        context: ./nginx
+  #        dockerfile: Dockerfile
+  #      restart: always
+  #      volumes:
+  #        - /mydata/nginx/nginx.conf:/etc/nginx/nginx.conf #配置文件挂载
+  #        - /mydata/nginx/html:/usr/share/nginx/html #静态资源根目录挂载
+  #        - /mydata/nginx/log:/var/log/nginx #日志文件挂载
+  #      ports:
+  #        - 80:80
+  #      tty: true
+  #  rabbitmq:
+  #    image: rabbitmq:3.7.15-management
+  #    container_name: rabbitmq
+  #    restart: always
+  #    volumes:
+  #      - /mydata/rabbitmq/data:/var/lib/rabbitmq #数据文件挂载
+  #      - /mydata/rabbitmq/log:/var/log/rabbitmq #日志文件挂载
+  #    ports:
+  #      - 5673:5672
+  #      - 15673:15672
+  #  elasticsearch:
+  #    image: elasticsearch:6.4.0
+  #    container_name: elasticsearch
+  #    environment:
+  #      - "cluster.name=elasticsearch" #设置集群名称为elasticsearch
+  #      - "discovery.type=single-node" #以单一节点模式启动
+  #      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小
+  #    volumes:
+  #      - /mydata/elasticsearch/plugins:/usr/share/elasticsearch/plugins #插件文件挂载
+  #      - /mydata/elasticsearch/data:/usr/share/elasticsearch/data #数据文件挂载
+  #    ports:
+  #      - 9300:9200
+  #  kibana:
+  #    image: kibana:6.4.0
+  #    container_name: kibana
+  #    links:
+  #      - elasticsearch:es #可以用es这个域名访问elasticsearch服务
+  #    depends_on:
+  #      - elasticsearch    #kibana在elasticsearch启动之后再启动
+  #    environment:
+  #      - "elasticsearch.hosts=http://es:9200" #设置访问elasticsearch的地址
+  #    ports:
+  #      - 5602:5601
+  mongo:
+    image: mongo:4.0
+    container_name: mongo
+    restart: always
+    environment:
+      #      These variables, used in conjunction, create a new user and set that user's password.
+      #      This user is created in the admin authentication database and given the role of root,
+      #      which is a "superuser" role.
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: dz6mQp8z
+    volumes:
+      - /mydata/mongo/db:/data/db #数据文件挂载
+      - /mydata/mongo/example_db:/data/example_db
+      - /mydata/mongo/logs:/data/logs
+      - /mydata/mongo/etc/mongod.conf:/etc/mongod.conf
+    ports:
+      - 27018:27017
+  #  zookeeper:
+  #    image: wurstmeister/zookeeper
+  #    restart: always
+  #    hostname: zoo1
+  #    container_name: like-zookeeper-1
+  #    #domainname:
+  #    ports:
+  #      - 2182:2181
+  #    volumes:
+  #      - /mydata/zookeeper/zoo1/data:/data
+  #      - /mydata/zookeeper/zoo1/datalog:/datalog
+
+  #  kafka:
+  #    image: wurstmeister/kafka
+  #    ports:
+  #      - "9093:9092"
+  #    # host name your docker machine ip
+  #    environment:
+  #      KAFKA_ADVERTISED_HOST_NAME: "39.108.125.252"
+  #      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #    restart: always
+  #    volumes:
+  #      - ./docker.sock:/var/run/docker.sock
+  #    depends_on:
+  #      - zookeeper
+  #  报错解决方式：https://github.com/emqx/emqx-docker/issues/89  （尝试过，chmod chown均不顶用）
+  #  emqx:
+  #    image: emqx/emqx
+  #    container_name: emqx
+  #    restart: always
+  #    ports:
+  #      - "18084:18083"
+  #      - "1884:1883"
+  #      - "8085:8084"
+  #      - "8884:8883"
+  #      - "8084:8083"
+  #    volumes:
+  #      - /mydata/emqx/log:/opt/emqx/log
+  #      - /mydata/emqx/data:/opt/emqx/data
+  #      - /mydata/emqx/lib:/opt/emqx/lib
+  #      - /mydata/emqx/lib:/opt/emqx/etc
+  #  三个 docker 容器将会一起编排，可以直接使用容器名代替容器 ip，如这里 nameserver 容器名 rmqnamesrv。
+  #  （容器名+端口访问有问题，后续待处理）
+  #  解决『rmqbroker exited with code 253』  的问题
+  #  chown 3000:3000 -R /mydata/rocketmq  #（宿主机的挂载目录）
+  #  chown 3000:3000 -R /mydata/rocketmq  #（宿主机的挂载目录）
+  rocketmq_namesrv:
+    image: foxiswho/rocketmq:server
+    container_name: rmqnamesrv
+    restart: always
+    ports:
+      - 50506:9876
+    volumes:
+      - /mydata/rocketmq/logs:/home/rocketmq/logs
+      - /mydata/rocketmq/store:/home/rocketmq/store
+  #    command: sh mqnamesrv
+  rocketmq_broker:
+    image: foxiswho/rocketmq:broker
+    container_name: rmqbroker
+    restart: always
+    #    而其他两个端口是根据listenPort的值，动态计算出来的。这三个端口由Broker内部不同的组件使用，作用分别如下：
+    #    remotingServer：监听listenPort配置项指定的监听端口，默认10911
+    #    fastRemotingServer：监听端口值listenPort-2，即默认为10909
+    #    HAService：监听端口为值为listenPort+1，即10912，该端口用于Broker的主从同步
+    ports:
+      - 50501:50501
+      - 50503:50503
+      - 50504:50504
+    volumes:
+      - /mydata/rocketmq/logs:/opt/logs
+      - /mydata/rocketmq/store:/opt/store
+      - /mydata/rocketmq/conf/broker.conf:/etc/rocketmq/broker.conf
+    #    command: mqbroker -c /etc/rocketmq/broker.conf -Drocketmq.client.logRoot=/opt/logs/test -Drocketmq.client.logLevel=error
+    command: mqbroker -c /etc/rocketmq/broker.conf
+    depends_on:
+      - rocketmq_namesrv
+    environment:
+      NAMESRV_ADDR: "172.16.100.24:50506"
+      JAVA_OPTS: " -Duser.home=/opt"
+      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
+  rocketmq_console:
+    image: styletang/rocketmq-console-ng
+    container_name: rocketmq-console-ng
+    restart: always
+    ports:
+      - 50505:8080
+    depends_on:
+      - rocketmq_namesrv
+    environment:
+      - JAVA_OPTS= -Dlogging.level.root=info   -Drocketmq.namesrv.addr=172.16.100.24:50506
+      - Dcom.rocketmq.sendMessageWithVIPChannel=false
+#  Unable to update instance pid: Unable to create directory /nexus-data/instances   报错解决方式：chmod 777 -R /mydata/nexus3/
+#  Default user is admin and the uniquely generated password can be found
+#  in the admin.password file inside the volume. See Persistent Data for information about the volume.
+# 细节可参考 https://xinxiamu.github.io/2018/12/30/maven-nexus-jar/
+  nexus3:
+    image: sonatype/nexus3:3.18.1
+    container_name: nexus3
+    restart: always
+    volumes:
+      - /mydata/nexus3/data:/nexus-data
+    ports:
+      - 50581:8081
+    environment:
+      TZ: Asia/Shanghai
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+  gitlab:
+    image: 'twang2218/gitlab-ce-zh:11.1.4'
+    restart: unless-stopped
+    hostname: 'gitlab.dev.x-code.top'
+    container_name: gitlab
+    environment:
+      TZ: 'Asia/Shanghai'
+      GITLAB_OMNIBUS_CONFIG: |
+        gitlab_rails['smtp_enable'] = true
+        gitlab_rails['gitlab_email_from'] = 'dept@x-code.top'
+        gitlab_rails['gitlab_email_display_name'] = 'x-code.top'
+        gitlab_rails['gitlab_email_reply_to'] = 'dept@x-code.top'
+        gitlab_rails['smtp_address'] = "smtp.mxhichina.com"
+        gitlab_rails['smtp_port'] = 465
+        gitlab_rails['smtp_user_name'] = "dept@x-code.top"
+        gitlab_rails['smtp_password'] = "hJ20201117"
+        gitlab_rails['smtp_domain'] = "mxhichina.com"
+        gitlab_rails['smtp_authentication'] = "login"
+        gitlab_rails['smtp_enable_starttls_auto'] = true
+        gitlab_rails['smtp_tls'] = true
+        unicorn['worker_memory_limit_min'] = "400 * 1 << 20"
+        unicorn['worker_memory_limit_max'] = "650 * 1 << 20"
+    ports:
+      - '50588:80'
+      - '50443:443'
+      - '50022:22'
+    volumes:
+      - /mydata/gitlab/config:/etc/gitlab
+      - /mydata/gitlab/data:/var/opt/gitlab
+      - /mydata/gitlab/logs:/var/log/gitlab
+#
+#  yoma-boot:
+#    image: yoma/yoma-boot:latest
+#    container_name: yoma-boot
+#    restart: always
+##    networks:
+##      - sc-net
+#    ports:
+#      - 8283:8282
+##    env_file: .env
+#    environment:
+#      TZ: Asia/Shanghai
+#    volumes:
+#      - /software/logs-docker:/software/logs
+#    depends_on:
+#      - mysql
+#      - redis
+#      - mongo
+#      - nginx

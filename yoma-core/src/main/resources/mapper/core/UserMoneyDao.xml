@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.UserMoneyDao">
+    
+	<sql id="userMoneyColumns">
+		a.id AS "id",
+		a.userType AS "userType",
+		a.userId AS "userId",
+		a.money AS "money",
+		a.applyMoney AS "applyMoney",
+		a.frozenMoney AS "frozenMoney",
+		a.createTime AS "createTime",
+		a.updateTime AS "updateTime",
+	</sql>
+
+	<sql id="carInfoColumns">
+		t1.cardNo AS "cardNo",
+		t1.cardOrigin AS "cardOrigin",
+		t1.contactTel AS "contactTel",
+		t1.contact AS "contact",
+		t1.salesmanName AS "salesmanName",
+		t1.salesmanId AS "salesmanId",
+	</sql>
+
+	<sql id="clientInfoColumns">
+		t2.companyName AS "companyName",
+		t2.contactTel AS "contactTel",
+		t2.contact AS "contact",
+		t2.salesmanName AS "salesmanName",
+		t2.salesmanId AS "salesmanId",
+	</sql>
+
+	<sql id="carJoins">
+		LEFT JOIN t_car_infor t1 ON a.userId = t1.loginAppId
+	</sql>
+	<sql id="clientJoins">
+		LEFT JOIN t_client_infor t2 ON a.userId = t2.loginAppId
+	</sql>
+
+	<sql id="userMoneyJoins">
+	</sql>
+    
+	<select id="get" resultType="UserMoney">
+		SELECT 
+			<include refid="userMoneyColumns"/>
+		FROM t_user_money a
+			<include refid="userMoneyJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="UserMoney">
+		SELECT 
+			<include refid="userMoneyColumns"/>
+			<if test="userType == 1">
+				<include refid="clientInfoColumns"/>
+			</if>
+			<if test="userType == 2">
+				<include refid="carInfoColumns"/>
+			</if>
+		FROM t_user_money a
+			<include refid="userMoneyJoins"/>
+			<if test="userType == 1">
+				<include refid="clientJoins"/>
+			</if>
+			<if test="userType == 2">
+				<include refid="carJoins"/>
+			</if>
+		<where>
+			
+			<if test="userType != null     ">
+				AND a.userType = #{userType}
+			</if>
+			<if test="userId != null     ">
+				AND a.userId = #{userId}
+			</if>
+			<if test="beginCreateTime != null and endCreateTime != null ">
+				AND a.createTime BETWEEN #{beginCreateTime} AND #{endCreateTime}
+			</if>
+			<if test="beginUpdateTime != null and endUpdateTime != null ">
+				AND a.updateTime BETWEEN #{beginUpdateTime} AND #{endUpdateTime}
+			</if>
+
+			<if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+				AND
+				id IN
+				<foreach collection="batchIdList" item="id" index="index"
+						 open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}  a.id desc
+			</when>
+			<otherwise>
+			a.id desc
+			</otherwise>
+		</choose>
+	</select>
+	
+
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO t_user_money(
+						userType,
+						userId,
+						money,
+						applyMoney,
+						frozenMoney,
+		) VALUES (
+					#{userType},
+					#{userId},
+					#{money},
+					#{applyMoney},
+					#{frozenMoney},
+		)
+	</insert>
+	
+<insert id ="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" >
+           INSERT INTO t_user_money
+           (
+							userType,
+							userId,
+							money,
+							applyMoney,
+							frozenMoney,
+							createTime,
+							updateTime
+           )
+           values
+            <foreach collection ="list" item="item" index= "index" separator =",">
+                (
+						#{item.userType},
+						#{item.userId},
+						#{item.money},
+						#{item.applyMoney},
+						#{item.frozenMoney},
+						#{item.createTime},
+						#{item.updateTime}
+                )
+            </foreach >
+     </insert >
+	
+	
+	
+	
+	<update id="update">
+		UPDATE t_user_money 
+			<set> 	
+				<if test="userType != null  ">
+					userType = #{userType},
+				</if>
+				<if test="userId != null  ">
+					userId = #{userId},
+				</if>
+				<if test="money != null  ">
+					money = money + #{money},
+				</if>
+				<if test="applyMoney != null  ">
+					applyMoney = applyMoney + #{applyMoney},
+				</if>
+				<if test="frozenMoney != null  ">
+					frozenMoney = frozenMoney + #{frozenMoney},
+				</if>
+			</set>
+			<where>
+				id = #{id}
+			</where>
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM t_user_money
+		<where>   id = #{id} </where>
+	</delete>
+
+
+	<delete id="batchDelete">
+		DELETE FROM t_user_money
+		<where>
+			id IN
+			<foreach collection="batchIdList" item="id" index="index"
+					 open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+
+
+	
+</mapper>

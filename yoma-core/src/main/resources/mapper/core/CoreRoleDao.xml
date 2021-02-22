@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.CoreRoleDao">
+
+    <sql id="coreRoleJoins">
+        <choose>
+            <when test="roleType eq 11">
+                LEFT JOIN core_account_role ar ON a.id = ar.role_id
+            </when>
+            <when test="roleType eq 22">
+                LEFT JOIN core_account_company ac ON a.id = ac.role_id
+                LEFT JOIN core_company c ON c.id = ac.company_id
+            </when>
+            <when test="roleType eq 33">
+                LEFT JOIN core_account_project cp ON a.id = cp.role_id
+                LEFT JOIN prj_project p ON cp.project_id = p.id
+                LEFT JOIN core_company c ON c.id = p.project_company
+            </when>
+        </choose>
+    </sql>
+
+    <sql id="coreRoleColumns">
+        distinct
+		a.id AS "id",
+		a.role_name AS "roleName",
+		a.role_type AS "roleType",
+		a.role_des AS "roleDes",
+		a.role_target AS "roleTarget",
+		a.role_menu AS "roleMenu",
+        <choose>
+            <when test="roleType eq 11">
+            </when>
+            <when test="roleType eq 22">
+                c.company_name companyName,
+                c.id companyId,
+            </when>
+            <when test="roleType eq 33">
+                p.project_name projectName,
+                p.project_status projectStatus,
+                p.id projectId ,
+                cp.id accountProjectId,
+                c.company_name projectCompanyName,
+            </when>
+        </choose>
+		a.role_action AS "roleAction"
+	</sql>
+
+    <select id="get" resultType="CoreRole">
+        SELECT
+        <include refid="coreRoleColumns"/>
+        FROM core_role a
+        <include refid="coreRoleJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="CoreRole">
+        SELECT
+        <include refid="coreRoleColumns"/>
+        FROM core_role a
+        <include refid="coreRoleJoins"/>
+        <where>
+
+            <if test="roleName != null     ">
+                AND a.role_name LIKE
+                <if test="dbName == 'oracle'">'%'||#{roleName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{roleName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{roleName},'%')</if>
+            </if>
+            <if test="roleType != null     ">
+                AND a.role_type = #{roleType}
+            </if>
+            <if test="accountIdForSystem != null     ">
+                AND ar.account_id = #{accountIdForSystem}
+            </if>
+            <if test="accountIdForCompany!= null     ">
+                AND ac.account_id = #{accountIdForCompany}
+            </if>
+            <if test="accountIdForProject != null     ">
+                AND cp.account_id =  #{accountIdForProject}
+            </if>
+
+            <choose>
+                <when test="roleType eq 11">
+                </when>
+                <when test="roleType eq 22">
+                   and  c.company_name is not null
+                </when>
+                <when test="roleType eq 33">
+                    and p.project_status = 11
+                    and p.project_name is not null
+                </when>
+            </choose>
+
+            <if test="roleTarget != null     ">
+                AND a.role_target = #{roleTarget}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO core_role(
+						role_name,
+						role_type,
+						role_des,
+						role_target,
+						role_menu,
+						role_action
+		) VALUES (
+					#{roleName},
+					#{roleType},
+					#{roleDes},
+					#{roleTarget},
+					#{roleMenu},
+					#{roleAction}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO core_role
+        (
+        role_name,
+        role_type,
+        role_des,
+        role_target,
+        role_menu,
+        role_action
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.roleName},
+            #{item.roleType},
+            #{item.roleDes},
+            #{item.roleTarget},
+            #{item.roleMenu},
+            #{item.roleAction}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE core_role
+        <set>
+            <if test="roleName != null  ">
+                role_name = #{roleName},
+            </if>
+            <if test="roleType != null  ">
+                role_type = #{roleType},
+            </if>
+            <if test="roleDes != null and roleDes != '' ">
+                role_des = #{roleDes},
+            </if>
+            <if test="roleTarget != null  ">
+                role_target = #{roleTarget},
+            </if>
+            <if test="roleMenu != null and roleMenu != '' ">
+                role_menu = #{roleMenu},
+            </if>
+            <if test="roleAction != null and roleAction != '' ">
+                role_action = #{roleAction},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM core_role
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM core_role
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

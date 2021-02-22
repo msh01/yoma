@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.BaseDeptDao">
+
+    <sql id="baseDeptColumns">
+		a.id AS "id",
+		a.pid AS "pid",
+		a.sub_count AS "subCount",
+		a.name AS "name",
+		a.dept_sort AS "deptSort",
+		a.enabled AS "enabled",
+		a.create_by AS "createBy",
+		a.update_by AS "updateBy",
+		a.create_time AS "createTime",
+		a.update_time AS "updateTime"
+	</sql>
+
+    <sql id="baseDeptJoins">
+    </sql>
+
+    <select id="get" resultType="BaseDept">
+        SELECT
+        <include refid="baseDeptColumns"/>
+        FROM base_dept a
+        <include refid="baseDeptJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="BaseDept">
+        SELECT
+        <include refid="baseDeptColumns"/>
+        FROM base_dept a
+        <include refid="baseDeptJoins"/>
+        <where>
+
+            <if test="pid != null     ">
+                AND a.pid = #{pid}
+            </if>
+            <if test="pid == null      ">
+                AND a.pid is null
+            </if>
+            <if test="subCount != null     ">
+                AND a.sub_count = #{subCount}
+            </if>
+            <if test="name != null    and name != ''  ">
+                AND a.name LIKE
+                <if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+            </if>
+            <if test="enabled != null     ">
+                AND a.enabled = #{enabled}
+            </if>
+            <!--<if test="createBy != null     ">
+                AND a.create_by = #{createBy}
+            </if>
+            <if test="updateBy != null     ">
+                AND a.update_by = #{updateBy}
+            </if>-->
+            <if test="beginCreateTime != null and endCreateTime != null ">
+                AND a.create_time BETWEEN #{beginCreateTime} AND #{endCreateTime}
+            </if>
+            <if test="beginUpdateTime != null and endUpdateTime != null ">
+                AND a.update_time BETWEEN #{beginUpdateTime} AND #{endUpdateTime}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO base_dept(
+						pid,
+						sub_count,
+						name,
+						dept_sort,
+						enabled,
+						create_by,
+						update_by,
+						create_time,
+						update_time
+		) VALUES (
+					#{pid},
+					#{subCount},
+					#{name},
+					#{deptSort},
+					#{enabled},
+					#{createBy},
+					#{updateBy},
+					#{createTime},
+					#{updateTime}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO base_dept
+        (
+        pid,
+        sub_count,
+        name,
+        dept_sort,
+        enabled,
+        create_by,
+        update_by,
+        create_time,
+        update_time
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.pid},
+            #{item.subCount},
+            #{item.name},
+            #{item.deptSort},
+            #{item.enabled},
+            #{item.createBy},
+            #{item.updateBy},
+            #{item.createTime},
+            #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE base_dept
+        <set>
+            <if test="pid != null  ">
+                pid = #{pid},
+            </if>
+            <if test="subCount != null  ">
+                sub_count = #{subCount},
+            </if>
+            <if test="name != null and name != '' ">
+                name = #{name},
+            </if>
+            <if test="deptSort != null  ">
+                dept_sort = #{deptSort},
+            </if>
+            <if test="enabled != null  ">
+                enabled = #{enabled},
+            </if>
+            <if test="createBy != null  ">
+                create_by = #{createBy},
+            </if>
+            <if test="updateBy != null  ">
+                update_by = #{updateBy},
+            </if>
+            <if test="createTime != null  ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null  ">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM base_dept
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM base_dept
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

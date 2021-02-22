@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.CoreRoleMenuDao">
+
+    <sql id="coreRoleMenuColumns">
+		a.role_id AS "roleId",
+		a.menu_id AS "menuId",
+		a.id AS "id"
+	</sql>
+
+    <sql id="coreRoleMenuJoins">
+    </sql>
+
+    <select id="get" resultType="CoreRoleMenu">
+        SELECT
+        <include refid="coreRoleMenuColumns"/>
+        FROM core_role_menu a
+        <include refid="coreRoleMenuJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="CoreRoleMenu">
+        SELECT
+        <include refid="coreRoleMenuColumns"/>
+        FROM core_role_menu a
+        <include refid="coreRoleMenuJoins"/>
+        <where>
+
+            <if test="roleId != null     ">
+                AND a.role_id = #{roleId}
+            </if>
+            <if test="menuId != null     ">
+                AND a.menu_id = #{menuId}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO core_role_menu(
+						role_id,
+						menu_id
+		) VALUES (
+					#{roleId},
+					#{menuId}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO core_role_menu
+        (
+        role_id,
+        menu_id
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.roleId},
+            #{item.menuId}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE core_role_menu
+        <set>
+            <if test="roleId != null  ">
+                role_id = #{roleId},
+            </if>
+            <if test="menuId != null  ">
+                menu_id = #{menuId},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM core_role_menu
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM core_role_menu
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

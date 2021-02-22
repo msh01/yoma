@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.order.dao.BetonReceivingDao">
+
+    <sql id="betonReceivingColumns">
+		a.id AS "id",
+		a.clientId AS "clientId",
+		a.betonClientId AS "betonClientId",
+		a.projectId AS "projectId",
+		a.paymentType AS "paymentType",
+		a.payType AS "payType",
+		a.tradeNo AS "tradeNo",
+		a.receivingUnit AS "receivingUnit",
+		a.receivingBank AS "receivingBank",
+		a.receivingCard AS "receivingCard",
+		a.paymentUnit AS "paymentUnit",
+		a.paymentBank AS "paymentBank",
+		a.paymentCard AS "paymentCard",
+		a.payTime AS "payTime",
+		a.paymentAmount AS "paymentAmount",
+		a.voucher AS "voucher",
+		a.remark AS "remark",
+		a.createTime AS "createTime",
+		a.createId AS "createId",
+		a.updateTime AS "updateTime"
+	</sql>
+
+    <sql id="betonReceivingJoins">
+    </sql>
+
+    <select id="get" resultType="BetonReceiving">
+        SELECT
+        <include refid="betonReceivingColumns"/>
+        FROM t_beton_receiving a
+        <include refid="betonReceivingJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="BetonReceiving">
+        SELECT
+        <include refid="betonReceivingColumns"/>
+        FROM t_beton_receiving a
+        <include refid="betonReceivingJoins"/>
+        <where>
+
+            <if test="clientId != null     ">
+                AND a.clientId = #{clientId}
+            </if>
+            <if test="betonClientId != null     ">
+                AND a.betonClientId = #{betonClientId}
+            </if>
+            <if test="projectId != null     ">
+                AND a.projectId = #{projectId}
+            </if>
+            <if test="paymentType != null     ">
+                AND a.paymentType = #{paymentType}
+            </if>
+            <if test="payType != null     ">
+                AND a.payType = #{payType}
+            </if>
+            <if test="tradeNo != null    and tradeNo != ''  ">
+                AND a.tradeNo LIKE
+                <if test="dbName == 'oracle'">'%'||#{tradeNo}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{tradeNo}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{tradeNo},'%')</if>
+            </if>
+            <if test="receivingUnit != null    and receivingUnit != ''  ">
+                AND a.receivingUnit LIKE
+                <if test="dbName == 'oracle'">'%'||#{receivingUnit}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{receivingUnit}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{receivingUnit},'%')</if>
+            </if>
+            <if test="receivingBank != null    and receivingBank != ''  ">
+                AND a.receivingBank = #{receivingBank}
+            </if>
+            <if test="receivingCard != null    and receivingCard != ''  ">
+                AND a.receivingCard LIKE
+                <if test="dbName == 'oracle'">'%'||#{receivingCard}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{receivingCard}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{receivingCard},'%')</if>
+            </if>
+            <if test="paymentUnit != null    and paymentUnit != ''  ">
+                AND a.paymentUnit LIKE
+                <if test="dbName == 'oracle'">'%'||#{paymentUnit}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{paymentUnit}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{paymentUnit},'%')</if>
+            </if>
+            <if test="paymentBank != null    and paymentBank != ''  ">
+                AND a.paymentBank LIKE
+                <if test="dbName == 'oracle'">'%'||#{paymentBank}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{paymentBank}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{paymentBank},'%')</if>
+            </if>
+            <if test="paymentCard != null    and paymentCard != ''  ">
+                AND a.paymentCard LIKE
+                <if test="dbName == 'oracle'">'%'||#{paymentCard}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{paymentCard}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{paymentCard},'%')</if>
+            </if>
+            <if test="beginPayTime != null and endPayTime != null ">
+                AND a.payTime BETWEEN #{beginPayTime} AND #{endPayTime}
+            </if>
+            <if test="beginPaymentAmount != null and endPaymentAmount != null ">
+                AND a.paymentAmount BETWEEN #{beginPaymentAmount} AND #{endPaymentAmount}
+            </if>
+            <if test="beginCreateTime != null and endCreateTime != null ">
+                AND a.createTime BETWEEN #{beginCreateTime} AND #{endCreateTime}
+            </if>
+            <if test="createId != null     ">
+                AND a.createId = #{createId}
+            </if>
+            <if test="beginUpdateTime != null and endUpdateTime != null ">
+                AND a.updateTime BETWEEN #{beginUpdateTime} AND #{endUpdateTime}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_beton_receiving(
+						clientId,
+						betonClientId,
+						projectId,
+						paymentType,
+						payType,
+						tradeNo,
+						receivingUnit,
+						receivingBank,
+						receivingCard,
+						paymentUnit,
+						paymentBank,
+						paymentCard,
+						payTime,
+						paymentAmount,
+						voucher,
+						remark,
+						createTime,
+						createId,
+						updateTime
+		) VALUES (
+					#{clientId},
+					#{betonClientId},
+					#{projectId},
+					#{paymentType},
+					#{payType},
+					#{tradeNo},
+					#{receivingUnit},
+					#{receivingBank},
+					#{receivingCard},
+					#{paymentUnit},
+					#{paymentBank},
+					#{paymentCard},
+					#{payTime},
+					#{paymentAmount},
+					#{voucher},
+					#{remark},
+					#{createTime},
+					#{createId},
+					#{updateTime}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO t_beton_receiving
+        (
+        clientId,
+        betonClientId,
+        projectId,
+        paymentType,
+        payType,
+        tradeNo,
+        receivingUnit,
+        receivingBank,
+        receivingCard,
+        paymentUnit,
+        paymentBank,
+        paymentCard,
+        payTime,
+        paymentAmount,
+        voucher,
+        remark,
+        createTime,
+        createId,
+        updateTime
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.clientId},
+            #{item.betonClientId},
+            #{item.projectId},
+            #{item.paymentType},
+            #{item.payType},
+            #{item.tradeNo},
+            #{item.receivingUnit},
+            #{item.receivingBank},
+            #{item.receivingCard},
+            #{item.paymentUnit},
+            #{item.paymentBank},
+            #{item.paymentCard},
+            #{item.payTime},
+            #{item.paymentAmount},
+            #{item.voucher},
+            #{item.remark},
+            #{item.createTime},
+            #{item.createId},
+            #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE t_beton_receiving
+        <set>
+            <if test="clientId != null  ">
+                clientId = #{clientId},
+            </if>
+            <if test="betonClientId != null  ">
+                betonClientId = #{betonClientId},
+            </if>
+            <if test="projectId != null  ">
+                projectId = #{projectId},
+            </if>
+            <if test="paymentType != null  ">
+                paymentType = #{paymentType},
+            </if>
+            <if test="payType != null  ">
+                payType = #{payType},
+            </if>
+            <if test="tradeNo != null and tradeNo != '' ">
+                tradeNo = #{tradeNo},
+            </if>
+            <if test="receivingUnit != null and receivingUnit != '' ">
+                receivingUnit = #{receivingUnit},
+            </if>
+            <if test="receivingBank != null and receivingBank != '' ">
+                receivingBank = #{receivingBank},
+            </if>
+            <if test="receivingCard != null and receivingCard != '' ">
+                receivingCard = #{receivingCard},
+            </if>
+            <if test="paymentUnit != null and paymentUnit != '' ">
+                paymentUnit = #{paymentUnit},
+            </if>
+            <if test="paymentBank != null and paymentBank != '' ">
+                paymentBank = #{paymentBank},
+            </if>
+            <if test="paymentCard != null and paymentCard != '' ">
+                paymentCard = #{paymentCard},
+            </if>
+            <if test="payTime != null  ">
+                payTime = #{payTime},
+            </if>
+            <if test="paymentAmount != null  ">
+                paymentAmount = #{paymentAmount},
+            </if>
+            <if test="voucher != null and voucher != '' ">
+                voucher = #{voucher},
+            </if>
+            <if test="remark != null and remark != '' ">
+                remark = #{remark},
+            </if>
+            <if test="createTime != null  ">
+                createTime = #{createTime},
+            </if>
+            <if test="createId != null  ">
+                createId = #{createId},
+            </if>
+            <if test="updateTime != null  ">
+                updateTime = #{updateTime},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_beton_receiving
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM t_beton_receiving
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

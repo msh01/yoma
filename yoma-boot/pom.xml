@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.github</groupId>
+        <artifactId>yoma</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <groupId>com.github.yoma</groupId>
+    <artifactId>yoma-boot</artifactId>
+    <name>yoma-boot</name>
+    <description>入口模块</description>
+
+
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-code-gen</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-mqtt</artifactId>
+            <version>${project.version}</version>
+        </dependency>-->
+        <!--<dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-opcua</artifactId>
+            <version>${project.version}</version>
+        </dependency>-->
+        <dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-iot</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.yoma</groupId>
+                    <artifactId>yoma-tools</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>-->
+        <!--<dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-prj</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.yoma</groupId>
+                    <artifactId>yoma-tools</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>-->
+        <dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-order</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.yoma</groupId>
+                    <artifactId>yoma-tools</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-stc</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.yoma</groupId>
+                    <artifactId>yoma-tools</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--<dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-mongodb</artifactId>
+            <version>${project.version}</version>
+        </dependency>-->
+        <dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-rocketmq</artifactId>
+            <version>${project.version}</version>
+        </dependency>-->
+        <dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-logging</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!--fork:如果没有该项配置,整个devtools不会起作用-->
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+            <!--<plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${docker.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>build-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <imageName>yoma/${project.artifactId}</imageName>
+                    &lt;!&ndash;<imageName>yoma/${project.artifactId}:${project.version}</imageName>&ndash;&gt;
+                    <dockerHost>${docker.host}</dockerHost>
+                    <baseImage>java:8</baseImage>
+                    <entryPoint>["java", "-jar", "-Dspring.profiles.active=test","/${project.build.finalName}.jar", ">
+                        /software/logs/${project.artifactId}.log"]
+                    </entryPoint>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>-->
+            <!-- 跳过单元测试 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+
+
+            </plugin>
+
+            <!--编译命令生成PDF，Html的步骤：
+            先执行命令mvn asciidoctor:process-asciidoc
+            Run 此UT，会生成Adoc文件。
+            然后在项目根目录执行 命令 mvn generate-resources 生成PDF和HTML
+            -->
+            <!-- 1.swagger.json文件转asciidoc文件-->
+            <plugin>
+                <groupId>io.github.swagger2markup</groupId>
+                <artifactId>swagger2markup-maven-plugin</artifactId>
+                <version>${swagger2markup.plugin.version}</version>
+                <configuration>
+                    <!-- 访问url -->
+                    <swaggerInput>http://localhost:8282/v2/api-docs</swaggerInput>
+                    <!-- 访问json文件-->
+                    <!--<swaggerInput>${docs.swagger.json.path}</swaggerInput>-->
+                    <!-- 生成多个文档输出路径 -->
+                    <!--<outputDir>${docs.asciidoc.path}</outputDir>-->
+                    <!-- 生成单个文档输出路径 -->
+                    <outputFile>${docs.asciidoc.path}/all</outputFile>
+                    <config>
+                        <swagger2markup.pathsGroupedBy>TAGS</swagger2markup.pathsGroupedBy>
+                        <!-- 选择：ASCIIDOC/MARKDOWN/CONFLUENCE_MARKUP-->
+                        <swagger2markup.markupLanguage>ASCIIDOC</swagger2markup.markupLanguage>
+                    </config>
+                </configuration>
+            </plugin>
+            <!--  2.asciidoc文件转html/pdf文件-->
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>${asciidoctor.plugin.version}</version>
+                <!-- 转换pdf使用的依赖 -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj-pdf</artifactId>
+                        <version>1.5.0-beta.8</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jruby</groupId>
+                        <artifactId>jruby-complete</artifactId>
+                        <version>9.2.9.0</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <sourceDirectory>${docs.asciidoc.path}</sourceDirectory>
+                    <doctype>book</doctype>
+                    <sourceHighlighter>coderay</sourceHighlighter>
+                    <headerFooter>true</headerFooter>
+                    <attributes>
+                        <!-- 菜单栏在左边 -->
+                        <toc>left</toc>
+                        <!-- 三级目录 -->
+                        <toclevels>3</toclevels>
+                        <!-- 数字序号 -->
+                        <sectnums>true</sectnums>
+                    </attributes>
+                </configuration>
+                <!-- 生成html和pdf两种格式 -->
+                <executions>
+                    <execution>
+                        <id>output-html</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${docs.html.path}</outputDirectory>
+                            <backend>html</backend>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>output-pdf</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${docs.pdf.path}</outputDirectory>
+                            <backend>pdf</backend>
+                            <!-- 处理中文字符问题  -->
+                            <attributes>
+                                <pdf-fontsdir>${docs.pdf.path}/fonts</pdf-fontsdir>
+                                <pdf-stylesdir>${docs.pdf.path}/themes</pdf-stylesdir>
+                                <pdf-style>cn</pdf-style>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+
+</project>

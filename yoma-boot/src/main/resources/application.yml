@@ -1,0 +1,71 @@
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+#    springboot配置跨mapper xml的全局变量:
+    variables:
+      archive-status-nomal: 1
+      archive-status-deleted: 11
+  mapper-locations: classpath*:/mapper/**/**.xml
+  type-aliases-package: com.github.yoma.stc.domain,com.github.yoma.stc.vo,com.github.yoma.core.domain,com.github.yoma.logging.domain,com.github.yoma.order.domain
+qiniu:
+  max-size: 15
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+    active: dev
+  data:
+    redis:
+      repositories:
+        enabled: false
+  freemarker:
+    check-template-location: false
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  #    serialization:
+  #      WRITE_DATES_AS_TIMESTAMPS: false
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+swagger:
+  enabled: true
+task:
+  pool:
+    core-pool-size: 10
+    keep-alive-seconds: 60
+    max-pool-size: 30
+    queue-capacity: 50
+file:
+  avatar: ''
+  avatarMaxSize: 5.0
+  maxSize: 100
+  path: ''
+generator:
+  enabled: true
+huawei:
+  appId: 102336851
+  appSecret: 7f60c9ad87938a92d875e739602d0a6b75fae87014ff43f2d64623b293720862
+jpush:
+  appKey: 3af9623fb64a6f164a06d962
+  masterSecret: 661b4332da159c3f232d2a9b
+  liveTime: 1000
+  apnsProduction: false # 是否生成环境，true表示生成环境
+aliyun:
+  sms:
+    accessKeyId: LTAI4G234253455vaQYZJ1ppmt
+    accessKeySecret: 123344354546464666
+    signName: 商砼云
+    templates:
+      identify:
+        templateCode: SMS_189560261
+      register-verify:
+        templateCode: SMS_189560258
+      password-find:
+        templateCode: SMS_189560257
+      alarm:
+        templateCode: SMS_189712502

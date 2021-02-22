@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.PaymentRequestDao">
+    
+	<sql id="paymentRequestColumns">
+		a.id AS "id",
+		a.processNo AS "processNo",
+		a.applyUserId AS "applyUserId",
+		a.userType AS "userType",
+		a.applyMoney AS "applyMoney",
+		a.payMoney AS "payMoney",
+		a.approvalType AS "approvalType",
+		a.linkCode AS "linkCode",
+		a.linkName AS "linkName",
+		a.linkDate AS "linkDate",
+		a.nextLinkCode AS "nextLinkCode",
+		a.nextLinkName AS "nextLinkName",
+		a.applyTime AS "applyTime",
+		a.overTime AS "overTime",
+		a.remark AS "remark"
+	</sql>
+
+	<sql id="carInfoColumns">
+		t1.cardNo AS "cardNo",
+		t1.cardOrigin AS "cardOrigin",
+		t1.contactTel AS "contactTel",
+		t1.contact AS "contact",
+		t1.salesmanName AS "salesmanName",
+		t1.salesmanId AS "salesmanId",
+	</sql>
+
+	<sql id="clientInfoColumns">
+		t2.companyName AS "companyName",
+		t2.contactTel AS "contactTel",
+		t2.contact AS "contact",
+		t2.salesmanName AS "salesmanName",
+		t2.salesmanId AS "salesmanId",
+	</sql>
+
+	<sql id="carJoins">
+		LEFT JOIN t_car_infor t1 ON a.applyUserId = t1.loginAppId
+	</sql>
+	<sql id="clientJoins">
+		LEFT JOIN t_client_infor t2 ON a.applyUserId = t2.loginAppId
+	</sql>
+	
+	<sql id="paymentRequestJoins">
+	</sql>
+    
+	<select id="get" resultType="PaymentRequest">
+		SELECT 
+			<include refid="paymentRequestColumns"/>
+		FROM t_payment_request a
+		<include refid="paymentRequestJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PaymentRequest">
+		SELECT 
+			<include refid="paymentRequestColumns"/>
+			<if test="userType == 1">
+				<include refid="clientInfoColumns"/>
+			</if>
+			<if test="userType == 2">
+				<include refid="carInfoColumns"/>
+			</if>
+		FROM t_payment_request a
+			<include refid="paymentRequestJoins"/>
+			<if test="userType == 1">
+				<include refid="clientJoins"/>
+			</if>
+			<if test="userType == 2">
+				<include refid="carJoins"/>
+			</if>
+		<where>
+			
+			<if test="processNo != null    and processNo != ''  ">
+				AND a.processNo = #{processNo}
+			</if>
+			<if test="applyUserId != null     ">
+				AND a.applyUserId = #{applyUserId}
+			</if>
+			<if test="userType != null     ">
+				AND a.userType = #{userType}
+			</if>
+			<if test="approvalType != null     ">
+				AND a.approvalType = #{approvalType}
+			</if>
+			<if test="linkCode != null    and linkCode != ''  ">
+				AND a.linkCode = #{linkCode}
+			</if>
+			<if test="linkName != null    and linkName != ''  ">
+				AND a.linkName LIKE 
+					<if test="dbName == 'oracle'">'%'||#{linkName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{linkName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{linkName},'%')</if>
+			</if>
+			<if test="beginLinkDate != null and endLinkDate != null ">
+				AND a.linkDate BETWEEN #{beginLinkDate} AND #{endLinkDate}
+			</if>
+			<if test="nextLinkCode != null    and nextLinkCode != ''  ">
+				AND a.nextLinkCode = #{nextLinkCode}
+			</if>
+			<if test="nextLinkName != null    and nextLinkName != ''  ">
+				AND a.nextLinkName = #{nextLinkName}
+			</if>
+			<if test="beginApplyTime != null and endApplyTime != null ">
+				AND a.applyTime BETWEEN #{beginApplyTime} AND #{endApplyTime}
+			</if>
+			<if test="beginOverTime != null and endOverTime != null ">
+				AND a.overTime BETWEEN #{beginOverTime} AND #{endOverTime}
+			</if>
+
+			<if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+				AND
+				id IN
+				<foreach collection="batchIdList" item="id" index="index"
+						 open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}  a.id desc
+			</when>
+			<otherwise>
+			a.id desc
+			</otherwise>
+		</choose>
+	</select>
+	
+
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO t_payment_request(
+						processNo,
+						applyUserId,
+						userType,
+						applyMoney,
+						payMoney,
+						approvalType,
+						linkCode,
+						linkName,
+						linkDate,
+						nextLinkCode,
+						nextLinkName,
+						applyTime,
+						overTime,
+						remark
+		) VALUES (
+					#{processNo},
+					#{applyUserId},
+					#{userType},
+					#{applyMoney},
+					#{payMoney},
+					#{approvalType},
+					#{linkCode},
+					#{linkName},
+					#{linkDate},
+					#{nextLinkCode},
+					#{nextLinkName},
+					#{applyTime},
+					#{overTime},
+					#{remark}
+		)
+	</insert>
+	
+<insert id ="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" >
+           INSERT INTO t_payment_request
+           (
+							processNo,
+							applyUserId,
+							userType,
+							applyMoney,
+							payMoney,
+							approvalType,
+							linkCode,
+							linkName,
+							linkDate,
+							nextLinkCode,
+							nextLinkName,
+							applyTime,
+							overTime,
+							remark
+           )
+           values
+            <foreach collection ="list" item="item" index= "index" separator =",">
+                (
+						#{item.processNo},
+						#{item.applyUserId},
+						#{item.userType},
+						#{item.applyMoney},
+						#{item.payMoney},
+						#{item.approvalType},
+						#{item.linkCode},
+						#{item.linkName},
+						#{item.linkDate},
+						#{item.nextLinkCode},
+						#{item.nextLinkName},
+						#{item.applyTime},
+						#{item.overTime},
+						#{item.remark}
+                )
+            </foreach >
+     </insert >
+	
+	
+	
+	
+	<update id="update">
+		UPDATE t_payment_request 
+			<set> 	
+				<if test="processNo != null and processNo != '' ">
+					processNo = #{processNo},
+				</if>
+				<if test="applyUserId != null  ">
+					applyUserId = #{applyUserId},
+				</if>
+				<if test="userType != null  ">
+					userType = #{userType},
+				</if>
+				<if test="applyMoney != null  ">
+					applyMoney = #{applyMoney},
+				</if>
+				<if test="payMoney != null  ">
+					payMoney = #{payMoney},
+				</if>
+				<if test="approvalType != null  ">
+					approvalType = #{approvalType},
+				</if>
+				<if test="linkCode != null and linkCode != '' ">
+					linkCode = #{linkCode},
+				</if>
+				<if test="linkName != null and linkName != '' ">
+					linkName = #{linkName},
+				</if>
+				<if test="linkDate != null  ">
+					linkDate = #{linkDate},
+				</if>
+				<if test="nextLinkCode != null and nextLinkCode != '' ">
+					nextLinkCode = #{nextLinkCode},
+				</if>
+				<if test="nextLinkName != null and nextLinkName != '' ">
+					nextLinkName = #{nextLinkName},
+				</if>
+				<if test="overTime != null  ">
+					overTime = #{overTime},
+				</if>
+				<if test="remark != null and remark != '' ">
+					remark = #{remark},
+				</if>
+			</set>
+			<where>
+				id = #{id}
+			</where>
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM t_payment_request
+		<where>   id = #{id} </where>
+	</delete>
+
+
+	<delete id="batchDelete">
+		DELETE FROM t_payment_request
+		<where>
+			id IN
+			<foreach collection="batchIdList" item="id" index="index"
+					 open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+
+</mapper>

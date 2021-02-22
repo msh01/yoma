@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.order.dao.BetonMoneyTotalDao">
+
+	<sql id="betonMoneyTotalColumns">
+		a.id AS "id",
+		a.clientId AS "clientId",
+		a.betonClientId AS "betonClientId",
+		a.projectId AS "projectId",
+		a.receivable AS "receivable",
+		a.backReceivable AS "backReceivable",
+		a.betonReceivable AS "betonReceivable",
+		a.betonBackReceivable AS "betonBackReceivable",
+		a.carReceivable AS "carReceivable",
+		a.carBackReceivable AS "carBackReceivable",
+		a.updateTime AS "updateTime"
+	</sql>
+
+	<sql id="betonMoneyTotalJoins">
+	</sql>
+
+	<select id="get" resultType="BetonMoneyTotal">
+		SELECT
+		<include refid="betonMoneyTotalColumns"/>
+		FROM t_beton_money_total a
+		<include refid="betonMoneyTotalJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="BetonMoneyTotal">
+		SELECT
+		<include refid="betonMoneyTotalColumns"/>
+		FROM t_beton_money_total a
+		<include refid="betonMoneyTotalJoins"/>
+		<where>
+
+			<if test="clientId != null     ">
+				AND a.clientId = #{clientId}
+			</if>
+			<if test="betonClientId != null     ">
+				AND a.betonClientId = #{betonClientId}
+			</if>
+			<if test="projectId != null     ">
+				AND a.projectId = #{projectId}
+			</if>
+			<if test="beginUpdateTime != null and endUpdateTime != null ">
+				AND a.updateTime BETWEEN #{beginUpdateTime} AND #{endUpdateTime}
+			</if>
+
+			<if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+				AND
+				id IN
+				<foreach collection="batchIdList" item="id" index="index"
+						 open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy} a.id desc
+			</when>
+			<otherwise>
+				a.id desc
+			</otherwise>
+		</choose>
+	</select>
+
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_beton_money_total(
+						clientId,
+						betonClientId,
+						projectId,
+						receivable,
+						backReceivable,
+						betonReceivable,
+						betonBackReceivable,
+						carReceivable,
+						carBackReceivable,
+						updateTime
+		) VALUES (
+					#{clientId},
+					#{betonClientId},
+					#{projectId},
+					#{receivable},
+					#{backReceivable},
+					#{betonReceivable},
+					#{betonBackReceivable},
+					#{carReceivable},
+					#{carBackReceivable},
+					#{updateTime}
+		)
+	</insert>
+
+	<insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+		INSERT INTO t_beton_money_total
+		(
+		clientId,
+		betonClientId,
+		projectId,
+		receivable,
+		backReceivable,
+		betonReceivable,
+		betonBackReceivable,
+		carReceivable,
+		carBackReceivable,
+		updateTime
+		)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+			#{item.clientId},
+			#{item.betonClientId},
+			#{item.projectId},
+			#{item.receivable},
+			#{item.backReceivable},
+			#{item.betonReceivable},
+			#{item.betonBackReceivable},
+			#{item.carReceivable},
+			#{item.carBackReceivable},
+			#{item.updateTime}
+			)
+		</foreach>
+	</insert>
+
+
+	<update id="update">
+		UPDATE t_beton_money_total
+		<set>
+			<if test="clientId != null  ">
+				clientId = #{clientId},
+			</if>
+			<if test="betonClientId != null  ">
+				betonClientId = #{betonClientId},
+			</if>
+			<if test="projectId != null  ">
+				projectId = #{projectId},
+			</if>
+			<if test="receivable != null  ">
+				receivable = #{receivable},
+			</if>
+			<if test="backReceivable != null  ">
+				backReceivable = #{backReceivable},
+			</if>
+			<if test="betonReceivable != null  ">
+				betonReceivable = #{betonReceivable},
+			</if>
+			<if test="betonBackReceivable != null  ">
+				betonBackReceivable = #{betonBackReceivable},
+			</if>
+			<if test="carReceivable != null  ">
+				carReceivable = #{carReceivable},
+			</if>
+			<if test="carBackReceivable != null  ">
+				carBackReceivable = #{carBackReceivable},
+			</if>
+			<if test="updateTime != null  ">
+				updateTime = #{updateTime},
+			</if>
+		</set>
+		<where>
+			id = #{id}
+		</where>
+	</update>
+
+	<delete id="delete">
+		DELETE FROM t_beton_money_total
+		<where>id = #{id}</where>
+	</delete>
+
+
+	<delete id="batchDelete">
+		DELETE FROM t_beton_money_total
+		<where>
+			id IN
+			<foreach collection="batchIdList" item="id" index="index"
+					 open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+
+
+</mapper>

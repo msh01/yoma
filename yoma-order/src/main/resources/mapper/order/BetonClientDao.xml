@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.order.dao.BetonClientDao">
+
+	<sql id="betonClientColumns">
+		a.id AS "id",
+		a.clientId AS "clientId",
+		a.clientNo AS "clientNo",
+		a.clientName AS "clientName",
+		a.clientType AS "clientType",
+		a.sex AS "sex",
+		a.checkType AS "checkType",
+		a.state AS "state",
+		a.createTime AS "createTime",
+		a.createId AS "createId",
+		a.createName AS "createName"
+	</sql>
+
+	<sql id="betonClientJoins">
+	</sql>
+
+	<select id="get" resultType="BetonClient">
+		SELECT
+			<include refid="betonClientColumns"/>
+		FROM t_beton_client a
+		<include refid="betonClientJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="BetonClient">
+		SELECT
+			<include refid="betonClientColumns"/>
+		FROM t_beton_client a
+		<include refid="betonClientJoins"/>
+		<where>
+
+			<if test="clientNo != null    and clientNo != ''  ">
+				AND a.clientNo LIKE
+					<if test="dbName == 'oracle'">'%'||#{clientNo}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{clientNo}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{clientNo},'%')</if>
+			</if>
+			<if test="clientName != null    and clientName != ''  ">
+				AND a.clientName LIKE
+					<if test="dbName == 'oracle'">'%'||#{clientName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{clientName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{clientName},'%')</if>
+			</if>
+			<if test="clientType != null     ">
+				AND a.clientType = #{clientType}
+			</if>
+			<if test="sex != null     ">
+				AND a.sex = #{sex}
+			</if>
+			<if test="checkType != null     ">
+				AND a.checkType = #{checkType}
+			</if>
+			<if test="state != null     ">
+				AND a.state = #{state}
+			</if>
+			<if test="beginCreateTime != null and endCreateTime != null ">
+				AND a.createTime BETWEEN #{beginCreateTime} AND #{endCreateTime}
+			</if>
+			<if test="createId != null     ">
+				AND a.createId = #{createId}
+			</if>
+			<if test="createName != null    and createName != ''  ">
+				AND a.createName LIKE
+					<if test="dbName == 'oracle'">'%'||#{createName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{createName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{createName},'%')</if>
+			</if>
+
+			<if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+				AND
+				id IN
+				<foreach collection="batchIdList" item="id" index="index"
+						 open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}  a.id desc
+			</when>
+			<otherwise>
+			a.id desc
+			</otherwise>
+		</choose>
+	</select>
+
+
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO t_beton_client(
+						clientId,
+						clientNo,
+						clientName,
+						clientType,
+						sex,
+						checkType,
+						state,
+						createTime,
+						createId,
+						createName
+		) VALUES (
+					#{clientId},
+					#{clientNo},
+					#{clientName},
+					#{clientType},
+					#{sex},
+					#{checkType},
+					#{state},
+					#{createTime},
+					#{createId},
+					#{createName}
+		)
+	</insert>
+
+<insert id ="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" >
+           INSERT INTO t_beton_client
+           (
+							clientId,
+							clientNo,
+							clientName,
+							clientType,
+							sex,
+							checkType,
+							state,
+							createTime,
+							createId,
+							createName
+           )
+           values
+            <foreach collection ="list" item="item" index= "index" separator =",">
+                (
+						#{item.clientId},
+						#{item.clientNo},
+						#{item.clientName},
+						#{item.clientType},
+						#{item.sex},
+						#{item.checkType},
+						#{item.state},
+						#{item.createTime},
+						#{item.createId},
+						#{item.createName}
+                )
+            </foreach >
+     </insert >
+
+
+
+
+	<update id="update">
+		UPDATE t_beton_client
+			<set>
+							<if test="clientId != null  ">
+								clientId = #{clientId},
+							</if>
+							<if test="clientNo != null and clientNo != '' ">
+								clientNo = #{clientNo},
+							</if>
+							<if test="clientName != null and clientName != '' ">
+								clientName = #{clientName},
+							</if>
+							<if test="clientType != null  ">
+								clientType = #{clientType},
+							</if>
+							<if test="sex != null  ">
+								sex = #{sex},
+							</if>
+							<if test="checkType != null  ">
+								checkType = #{checkType},
+							</if>
+							<if test="state != null  ">
+								state = #{state},
+							</if>
+							<if test="createTime != null  ">
+								createTime = #{createTime},
+							</if>
+							<if test="createId != null  ">
+								createId = #{createId},
+							</if>
+							<if test="createName != null and createName != '' ">
+								createName = #{createName},
+							</if>
+			</set>
+			<where>
+				id = #{id}
+			</where>
+	</update>
+
+	<delete id="delete">
+		DELETE FROM t_beton_client
+		<where>   id = #{id} </where>
+	</delete>
+
+
+	<delete id="batchDelete">
+		DELETE FROM t_beton_client
+		<where>
+			id IN
+			<foreach collection="batchIdList" item="id" index="index"
+					 open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+
+
+
+</mapper>

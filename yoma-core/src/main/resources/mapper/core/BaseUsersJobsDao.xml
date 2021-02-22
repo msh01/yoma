@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.BaseUsersJobsDao">
+
+    <sql id="baseUsersJobsColumns">
+		a.user_id AS "user.id",
+		a.job_id AS "jobId",
+		a.id AS "id",
+		u1.name AS "user_id.name"
+	</sql>
+
+    <sql id="baseUsersJobsJoins">
+		LEFT JOIN sys_user u1 ON u1.id = a.user_id
+	</sql>
+
+    <select id="get" resultType="BaseUsersJobs">
+        SELECT
+        <include refid="baseUsersJobsColumns"/>
+        FROM base_users_jobs a
+        <include refid="baseUsersJobsJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="BaseUsersJobs">
+        SELECT
+        <include refid="baseUsersJobsColumns"/>
+        FROM base_users_jobs a
+        <include refid="baseUsersJobsJoins"/>
+        <where>
+
+            <if test="user.id != null    and user.id != ''  ">
+                AND a.user_id = #{user.id}
+            </if>
+            <if test="jobId != null     ">
+                AND a.job_id = #{jobId}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO base_users_jobs(
+						user_id,
+						job_id
+		) VALUES (
+					#{user.id},
+					#{jobId}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO base_users_jobs
+        (
+        user_id,
+        job_id
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.user.id},
+            #{item.jobId}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE base_users_jobs
+        <set>
+            <if test="user.id != null and user.id != '' ">
+                user_id = #{user.id},
+            </if>
+            <if test="jobId != null  ">
+                job_id = #{jobId},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM base_users_jobs
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM base_users_jobs
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.order.dao.BetonPriceDetailDao">
+
+    <sql id="betonPriceDetailColumns">
+		a.id AS "id",
+		a.checkingNo AS "checkingNo",
+		a.clientId AS "clientId",
+		a.betonClientId AS "betonClientId",
+		a.projectId AS "projectId",
+		a.type1 AS "type1",
+		a.conStrength AS "conStrength",
+		a.unitPrice AS "unitPrice",
+		a.unitSellingPrice AS "unitSellingPrice",
+		a.batch AS "batch"
+	</sql>
+
+    <sql id="betonPriceDetailJoins">
+    </sql>
+
+    <select id="get" resultType="BetonPriceDetail">
+        SELECT
+        <include refid="betonPriceDetailColumns"/>
+        FROM t_beton_pricedetail a
+        <include refid="betonPriceDetailJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="BetonPriceDetail">
+        SELECT
+        <include refid="betonPriceDetailColumns"/>
+        FROM t_beton_pricedetail a
+        <include refid="betonPriceDetailJoins"/>
+        <where>
+
+            <if test="checkingNo != null    and checkingNo != ''  ">
+                AND a.checkingNo = #{checkingNo}
+            </if>
+            <if test="clientId != null     ">
+                AND a.clientId = #{clientId}
+            </if>
+            <if test="betonClientId != null     ">
+                AND a.betonClientId = #{betonClientId}
+            </if>
+            <if test="projectId != null     ">
+                AND a.projectId = #{projectId}
+            </if>
+            <if test="type1 != null     ">
+                AND a.type1 = #{type1}
+            </if>
+            <if test="conStrength != null    and conStrength != ''  ">
+                AND a.conStrength = #{conStrength}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_beton_pricedetail(
+						checkingNo,
+						clientId,
+						betonClientId,
+						projectId,
+						type1,
+						conStrength,
+						unitPrice,
+						unitSellingPrice,
+						batch
+		) VALUES (
+					#{checkingNo},
+					#{clientId},
+					#{betonClientId},
+					#{projectId},
+					#{type1},
+					#{conStrength},
+					#{unitPrice},
+					#{unitSellingPrice},
+					#{batch}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO t_beton_pricedetail
+        (
+        checkingNo,
+        clientId,
+        betonClientId,
+        projectId,
+        type1,
+        conStrength,
+        unitPrice,
+        unitSellingPrice,
+        batch
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.checkingNo},
+            #{item.clientId},
+            #{item.betonClientId},
+            #{item.projectId},
+            #{item.type1},
+            #{item.conStrength},
+            #{item.unitPrice},
+            #{item.unitSellingPrice},
+            #{item.batch}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE t_beton_pricedetail
+        <set>
+            <if test="checkingNo != null and checkingNo != '' ">
+                checkingNo = #{checkingNo},
+            </if>
+            <if test="clientId != null  ">
+                clientId = #{clientId},
+            </if>
+            <if test="betonClientId != null  ">
+                betonClientId = #{betonClientId},
+            </if>
+            <if test="projectId != null  ">
+                projectId = #{projectId},
+            </if>
+            <if test="type1 != null  ">
+                type1 = #{type1},
+            </if>
+            <if test="conStrength != null and conStrength != '' ">
+                conStrength = #{conStrength},
+            </if>
+            <if test="unitPrice != null  ">
+                unitPrice = #{unitPrice},
+            </if>
+            <if test="unitSellingPrice != null  ">
+                unitSellingPrice = #{unitSellingPrice},
+            </if>
+            <if test="batch != null and batch != '' ">
+                batch = #{batch},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_beton_pricedetail
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM t_beton_pricedetail
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

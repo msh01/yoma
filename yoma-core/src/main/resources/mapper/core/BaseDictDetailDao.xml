@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.BaseDictDetailDao">
+
+    <sql id="baseDictDetailColumns">
+		a.id AS "id",
+		a.dict_id AS "dictId",
+		a.label AS "label",
+		a.value AS "value",
+		a.dict_sort AS "dictSort",
+		a.create_by AS "createBy",
+		a.update_by AS "updateBy",
+		a.create_time AS "createTime",
+		a.update_time AS "updateTime"
+	</sql>
+
+    <sql id="baseDictDetailJoins">
+    </sql>
+
+    <select id="get" resultType="BaseDictDetail">
+        SELECT
+        <include refid="baseDictDetailColumns"/>
+        FROM base_dict_detail a
+        <include refid="baseDictDetailJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="BaseDictDetail">
+        SELECT
+        <include refid="baseDictDetailColumns"/>
+        FROM base_dict_detail a
+        <include refid="baseDictDetailJoins"/>
+        <where>
+
+            <if test="dictId != null     ">
+                AND a.dict_id = #{dictId}
+            </if>
+            <if test="label != null    and label != ''  ">
+                AND a.label = #{label}
+            </if>
+            <if test="value != null    and value != ''  ">
+                AND a.value = #{value}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO base_dict_detail(
+						dict_id,
+						label,
+						value,
+						dict_sort,
+						create_by,
+						update_by,
+						create_time,
+						update_time
+		) VALUES (
+					#{dictId},
+					#{label},
+					#{value},
+					#{dictSort},
+					#{createBy},
+					#{updateBy},
+					#{createTime},
+					#{updateTime}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO base_dict_detail
+        (
+        dict_id,
+        label,
+        value,
+        dict_sort,
+        create_by,
+        update_by,
+        create_time,
+        update_time
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.dictId},
+            #{item.label},
+            #{item.value},
+            #{item.dictSort},
+            #{item.createBy},
+            #{item.updateBy},
+            #{item.createTime},
+            #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE base_dict_detail
+        <set>
+            <if test="dictId != null  ">
+                dict_id = #{dictId},
+            </if>
+            <if test="label != null and label != '' ">
+                label = #{label},
+            </if>
+            <if test="value != null and value != '' ">
+                value = #{value},
+            </if>
+            <if test="dictSort != null  ">
+                dict_sort = #{dictSort},
+            </if>
+            <if test="createBy != null  ">
+                create_by = #{createBy},
+            </if>
+            <if test="updateBy != null  ">
+                update_by = #{updateBy},
+            </if>
+            <if test="createTime != null  ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null  ">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM base_dict_detail
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM base_dict_detail
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

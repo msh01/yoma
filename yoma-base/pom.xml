@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.github</groupId>
+        <artifactId>yoma</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <groupId>com.github.yoma</groupId>
+    <artifactId>yoma-base</artifactId>
+    <name>yoma-base</name>
+    <description>部门、员工、角色、权限等基础服务</description>
+
+    <properties>
+        <jjwt.version>0.9.1</jjwt.version>
+        <!--低版本在和spring boot 2 集成的时候会报错Modify 'fdfs.thumbImage' so that it conforms-->
+        <fastdfs-client.version>1.26.7</fastdfs-client.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.whvcse</groupId>
+            <artifactId>easy-captcha</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        <!--jwt-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-tools</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--<dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-prj</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>-->
+        <dependency>
+            <groupId>com.github.yoma</groupId>
+            <artifactId>yoma-logging</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.tobato</groupId>
+            <artifactId>fastdfs-client</artifactId>
+            <version>${fastdfs-client.version}</version>
+        </dependency>
+    </dependencies>
+
+
+</project>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.core.dao.BaseUsersRolesDao">
+
+	<sql id="baseUsersRolesColumns">
+		a.user_id AS "userId",
+		a.role_id AS "roleId",
+		a.id AS "id",
+	</sql>
+
+	<sql id="baseUsersRolesJoins">
+	</sql>
+
+	<select id="get" resultType="BaseUsersRoles">
+		SELECT
+			<include refid="baseUsersRolesColumns"/>
+		FROM base_users_roles a
+		<include refid="baseUsersRolesJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="BaseUsersRoles">
+		SELECT
+			<include refid="baseUsersRolesColumns"/>
+		FROM base_users_roles a
+		<include refid="baseUsersRolesJoins"/>
+		<where>
+
+			<if test="userId != null    and userId != ''  ">
+				AND a.user_id = #{userId}
+			</if>
+			<if test="roleId != null     ">
+				AND a.role_id = #{roleId}
+			</if>
+
+			<if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+				AND
+				id IN
+				<foreach collection="batchIdList" item="id" index="index"
+						 open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		ORDER BY
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}  a.id desc
+			</when>
+			<otherwise>
+			a.id desc
+			</otherwise>
+		</choose>
+	</select>
+
+
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO base_users_roles(
+						user_id,
+						role_id
+		) VALUES (
+					#{userId},
+					#{roleId}
+		)
+	</insert>
+
+<insert id ="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" >
+           INSERT INTO base_users_roles
+           (
+							user_id,
+							role_id
+           )
+           values
+            <foreach collection ="list" item="item" index= "index" separator =",">
+                (
+						#{item.userId},
+						#{item.roleId}
+                )
+            </foreach >
+     </insert >
+
+
+
+
+	<update id="update">
+		UPDATE base_users_roles
+			<set>
+							<if test="userId != null and userId != '' ">
+								user_id = #{userId},
+							</if>
+							<if test="roleId != null  ">
+								role_id = #{roleId},
+							</if>
+			</set>
+			<where>
+				id = #{id}
+			</where>
+	</update>
+
+	<delete id="delete">
+		DELETE FROM base_users_roles
+		<where>   id = #{id} </where>
+	</delete>
+	<delete id="deleteByUserId">
+		DELETE FROM base_users_roles
+		<where>   user_id = #{userId} </where>
+	</delete>
+
+
+	<delete id="batchDelete">
+		DELETE FROM base_users_roles
+		<where>
+			id IN
+			<foreach collection="batchIdList" item="id" index="index"
+					 open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+		</where>
+	</delete>
+
+
+
+</mapper>

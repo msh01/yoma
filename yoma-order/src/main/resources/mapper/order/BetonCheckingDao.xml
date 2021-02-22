@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.yoma.order.dao.BetonCheckingDao">
+
+    <sql id="betonCheckingColumns">
+		a.id AS "id",
+		a.checkingNo AS "checkingNo",
+		a.type1 AS "type1",
+		a.cumNum AS "cumNum",
+		a.clientId AS "clientId",
+		a.betonClientId AS "betonClientId",
+		a.projectId AS "projectId",
+		a.beginDate AS "beginDate",
+		a.endDate AS "endDate",
+		a.realityTon AS "realityTon",
+		a.cubicNum AS "cubicNum",
+		a.mortarTon AS "mortarTon",
+		a.mortarCubicNum AS "mortarCubicNum",
+		a.compMoney AS "compMoney",
+		a.unitPriceSum AS "unitPriceSum",
+		a.unitSellingPriceSum AS "unitSellingPriceSum",
+		a.detailNum AS "detailNum",
+		a.mptyNum AS "mptyNum",
+		a.financeType AS "financeType",
+		a.financeTime AS "financeTime",
+		a.financeId AS "financeId",
+		a.paasType AS "paasType",
+		a.paasTime AS "paasTime",
+		a.paasId AS "paasId",
+
+		p.projectName,
+		c.clientName betonClientName,
+		p.projectERPNo AS "projectERPNo",
+
+		a.enableType AS "enableType",
+		a.enableTime AS "enableTime",
+		a.createTime AS "createTime",
+		a.createId AS "createId",
+		a.updateTime AS "updateTime"
+	</sql>
+
+    <sql id="betonCheckingJoins">
+    LEFT JOIN t_beton_project p ON a.projectId = p.id
+	LEFT JOIN t_beton_client c ON a.betonClientId = c.id
+    </sql>
+
+    <select id="get" resultType="BetonChecking">
+        SELECT
+        <include refid="betonCheckingColumns"/>
+        FROM t_beton_checking a
+        <include refid="betonCheckingJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="BetonChecking">
+        SELECT
+        <include refid="betonCheckingColumns"/>
+        FROM t_beton_checking a
+        <include refid="betonCheckingJoins"/>
+        <where>
+
+            <if test="checkingNo != null    and checkingNo != ''  ">
+                AND a.checkingNo LIKE
+                <if test="dbName == 'oracle'">'%'||#{checkingNo}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{checkingNo}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{checkingNo},'%')</if>
+            </if>
+            <if test="type1 != null     ">
+                AND a.type1 = #{type1}
+            </if>
+            <if test="cumNum != null     ">
+                AND a.cumNum = #{cumNum}
+            </if>
+            <if test="clientId != null     ">
+                AND a.clientId = #{clientId}
+            </if>
+            <if test="betonClientId != null     ">
+                AND a.betonClientId = #{betonClientId}
+            </if>
+            <if test="projectId != null     ">
+                AND a.projectId = #{projectId}
+            </if>
+            <if test="beginBeginDate != null and endBeginDate != null ">
+                AND a.beginDate BETWEEN #{beginBeginDate} AND #{endBeginDate}
+            </if>
+            <if test="beginEndDate != null and endEndDate != null ">
+                AND a.endDate BETWEEN #{beginEndDate} AND #{endEndDate}
+            </if>
+            <if test="financeType != null     ">
+                AND a.financeType = #{financeType}
+            </if>
+            <if test="financeTime != null     ">
+                AND a.financeTime = #{financeTime}
+            </if>
+            <if test="financeId != null     ">
+                AND a.financeId = #{financeId}
+            </if>
+            <if test="paasType != null     ">
+                AND a.paasType = #{paasType}
+            </if>
+            <if test="beginPaasTime != null and endPaasTime != null ">
+                AND a.paasTime BETWEEN #{beginPaasTime} AND #{endPaasTime}
+            </if>
+            <if test="paasId != null     ">
+                AND a.paasId = #{paasId}
+            </if>
+            <if test="enableType != null     ">
+                AND a.enableType = #{enableType}
+            </if>
+            <if test="enableTime != null     ">
+                AND a.enableTime = #{enableTime}
+            </if>
+            <if test="beginCreateTime != null and endCreateTime != null ">
+                AND a.createTime BETWEEN #{beginCreateTime} AND #{endCreateTime}
+            </if>
+            <if test="createId != null     ">
+                AND a.createId = #{createId}
+            </if>
+            <if test="beginUpdateTime != null and endUpdateTime != null ">
+                AND a.updateTime BETWEEN #{beginUpdateTime} AND #{endUpdateTime}
+            </if>
+
+            <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
+                AND
+                id IN
+                <foreach collection="batchIdList" item="id" index="index"
+                         open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ${orderBy} a.id desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="createBetonChecking" resultType="BetonChecking" statementType="CALLABLE">
+
+       <![CDATA[
+
+
+
+
+
+
+                                                                                        call createBetonChecking(
+                                                                                        #{beginDataDate,mode=IN,jdbcType=DATE},
+                                                                                        #{endDataDate,mode=IN,jdbcType=DATE},
+                                                                                        #{clientId,mode=IN,jdbcType=BIGINT},
+                                                                                        #{betonClientId,mode=IN,jdbcType=BIGINT},
+                                                                                        #{projectId,mode=IN,jdbcType=BIGINT},
+                                                                                        #{checkingNo,mode=IN,jdbcType=VARCHAR},
+                                                                                        #{cumNum,mode=IN,jdbcType=BIGINT},
+                                                                                        #{createId,mode=IN,jdbcType=BIGINT},
+                                                                                        #{type,mode=IN,jdbcType=INTEGER},
+                                                                                        #{ifAgain,mode=IN,jdbcType=INTEGER}
+                                                                                        )
+                                                                                        ;
+
+
+
+
+
+
+
+
+        ]]>
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_beton_checking(
+						checkingNo,
+						type1,
+						cumNum,
+						clientId,
+						betonClientId,
+						projectId,
+						beginDate,
+						endDate,
+						realityTon,
+						cubicNum,
+						mortarTon,
+						mortarCubicNum,
+						compMoney,
+						unitPriceSum,
+						unitSellingPriceSum,
+						detailNum,
+						mptyNum,
+						financeType,
+						financeTime,
+						financeId,
+						paasType,
+						paasTime,
+						paasId,
+						enableType,
+						enableTime,
+						createTime,
+						createId,
+						updateTime
+		) VALUES (
+					#{checkingNo},
+					#{type1},
+					#{cumNum},
+					#{clientId},
+					#{betonClientId},
+					#{projectId},
+					#{beginDate},
+					#{endDate},
+					#{realityTon},
+					#{cubicNum},
+					#{mortarTon},
+					#{mortarCubicNum},
+					#{compMoney},
+					#{unitPriceSum},
+					#{unitSellingPriceSum},
+					#{detailNum},
+					#{mptyNum},
+					#{financeType},
+					#{financeTime},
+					#{financeId},
+					#{paasType},
+					#{paasTime},
+					#{paasId},
+					#{enableType},
+					#{enableTime},
+					#{createTime},
+					#{createId},
+					#{updateTime}
+		)
+	</insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO t_beton_checking
+        (
+        checkingNo,
+        type1,
+        cumNum,
+        clientId,
+        betonClientId,
+        projectId,
+        beginDate,
+        endDate,
+        realityTon,
+        cubicNum,
+        mortarTon,
+        mortarCubicNum,
+        compMoney,
+        unitPriceSum,
+        unitSellingPriceSum,
+        detailNum,
+        mptyNum,
+        financeType,
+        financeTime,
+        financeId,
+        paasType,
+        paasTime,
+        paasId,
+        enableType,
+        enableTime,
+        createTime,
+        createId,
+        updateTime
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.checkingNo},
+            #{item.type1},
+            #{item.cumNum},
+            #{item.clientId},
+            #{item.betonClientId},
+            #{item.projectId},
+            #{item.beginDate},
+            #{item.endDate},
+            #{item.realityTon},
+            #{item.cubicNum},
+            #{item.mortarTon},
+            #{item.mortarCubicNum},
+            #{item.compMoney},
+            #{item.unitPriceSum},
+            #{item.unitSellingPriceSum},
+            #{item.detailNum},
+            #{item.mptyNum},
+            #{item.financeType},
+            #{item.financeTime},
+            #{item.financeId},
+            #{item.paasType},
+            #{item.paasTime},
+            #{item.paasId},
+            #{item.enableType},
+            #{item.enableTime},
+            #{item.createTime},
+            #{item.createId},
+            #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update">
+        UPDATE t_beton_checking
+        <set>
+            <if test="checkingNo != null and checkingNo != '' ">
+                checkingNo = #{checkingNo},
+            </if>
+            <if test="type1 != null  ">
+                type1 = #{type1},
+            </if>
+            <if test="cumNum != null  ">
+                cumNum = #{cumNum},
+            </if>
+            <if test="clientId != null  ">
+                clientId = #{clientId},
+            </if>
+            <if test="betonClientId != null  ">
+                betonClientId = #{betonClientId},
+            </if>
+            <if test="projectId != null  ">
+                projectId = #{projectId},
+            </if>
+            <if test="beginDate != null  ">
+                beginDate = #{beginDate},
+            </if>
+            <if test="endDate != null  ">
+                endDate = #{endDate},
+            </if>
+            <if test="realityTon != null  ">
+                realityTon = #{realityTon},
+            </if>
+            <if test="cubicNum != null  ">
+                cubicNum = #{cubicNum},
+            </if>
+            <if test="mortarTon != null  ">
+                mortarTon = #{mortarTon},
+            </if>
+            <if test="mortarCubicNum != null  ">
+                mortarCubicNum = #{mortarCubicNum},
+            </if>
+            <if test="compMoney != null  ">
+                compMoney = #{compMoney},
+            </if>
+            <if test="unitPriceSum != null  ">
+                unitPriceSum = #{unitPriceSum},
+            </if>
+            <if test="unitSellingPriceSum != null  ">
+                unitSellingPriceSum = #{unitSellingPriceSum},
+            </if>
+            <if test="detailNum != null  ">
+                detailNum = #{detailNum},
+            </if>
+            <if test="mptyNum != null  ">
+                mptyNum = #{mptyNum},
+            </if>
+            <if test="financeType != null  ">
+                financeType = #{financeType},
+            </if>
+            <if test="financeTime != null  ">
+                financeTime = #{financeTime},
+            </if>
+            <if test="financeId != null  ">
+                financeId = #{financeId},
+            </if>
+            <if test="paasType != null  ">
+                paasType = #{paasType},
+            </if>
+            <if test="paasTime != null  ">
+                paasTime = #{paasTime},
+            </if>
+            <if test="paasId != null  ">
+                paasId = #{paasId},
+            </if>
+            <if test="enableType != null  ">
+                enableType = #{enableType},
+            </if>
+            <if test="enableTime != null  ">
+                enableTime = #{enableTime},
+            </if>
+            <if test="createTime != null  ">
+                createTime = #{createTime},
+            </if>
+            <if test="createId != null  ">
+                createId = #{createId},
+            </if>
+            <if test="updateTime != null  ">
+                updateTime = #{updateTime},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_beton_checking
+        <where>id = #{id}</where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM t_beton_checking
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+</mapper>

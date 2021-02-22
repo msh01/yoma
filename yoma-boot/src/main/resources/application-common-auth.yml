@@ -1,0 +1,12 @@
+code:
+  expiration: 5
+jwt:
+  codeKey: code-key
+  devToken: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU5NzE0OTIxNiwiaWF0IjoxNTc1NTQ5MjE2fQ.3mEF8hkxW36VuIsxjuzVBG4ea9l3QK3JtpeEyBSJnArjmXtoihg_W7rpCAuFW-wA7jvfCOuCY4LxdDWnqtfRoQ
+# 毫秒 1000*60*60*24*1
+  expiration: 86400000
+  header: Authorization
+  online: online-token
+  secret: mySecret
+loginCode:
+  expiration: 2

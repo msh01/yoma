@@ -8,4 +8,4 @@ fdfs:
         width: 150
         height: 150
     tracker-list:            #TrackerList参数,支持多个
-        - 172.16.100.24:22122
+        - ${YOMA_Tracker0}

@@ -1,9 +1,9 @@
 spring:
   redis:
     database: 0
-    host: 172.16.100.24
-    password: 'ytjGqmB49z38'
-    port: 6389
+    host: ${YOMA_REDIS_HOST}
+    password: ${YOMA_REDIS_PASSWORD}
+    port: ${YOMA_REDIS_PORT}
     timeout: 20000ms
     lettuce:
       pool:

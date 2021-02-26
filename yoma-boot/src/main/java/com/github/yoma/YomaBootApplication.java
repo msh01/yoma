@@ -15,12 +15,12 @@ import com.github.yoma.common.utils.SpringContextHolder;
 @EnableTransactionManagement
 @EnableAsync
 @MapperScan({"com.github.yoma.**.dao"})
-public class yomaBootApplication {
+public class YomaBootApplication {
 
 
 
     public static void main(String[] args) {
-        SpringApplication.run(yomaBootApplication.class, args);
+        SpringApplication.run(YomaBootApplication.class, args);
     }
 
     @Bean

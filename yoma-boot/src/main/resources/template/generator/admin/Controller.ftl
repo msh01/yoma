@@ -15,7 +15,7 @@
 */
 package ${package}.rest;
 
-import me.zhengjie.annotation.Log;
+import com.github.pagehelper.PageInfo;
 import ${package}.domain.${className};
 import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}QueryCriteria;
@@ -31,7 +31,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
-* @website https://el-admin.vip
 * @author ${author}
 * @date ${date}
 **/
@@ -41,47 +40,78 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/api/${changeClassName}")
 public class ${className}Controller {
 
-    private final ${className}Service ${changeClassName}Service;
+                @Autowired
+                private ${className}Service ${changeClassName}Service;
 
-    @Log("导出数据")
-    @ApiOperation("导出数据")
-    @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('${changeClassName}:list')")
-    public void download(HttpServletResponse response, ${className}QueryCriteria criteria) throws IOException {
-        ${changeClassName}Service.download(${changeClassName}Service.queryAll(criteria), response);
-    }
+                /**
+                * 列表查询
+                */
+                @ApiOperation(value = " 列表查询")
+                @PostMapping("list")
+                @AnonymousAccess
+                public PageResponse<${className}> list(@RequestBody ${className}QueryDTO queryDTO) {
+                PageInfo<${className}> pageInfo = ${changeClassName}Service.findPage(queryDTO);
+                PageResponse<${className}> pageResponse = ResponseUtil.pageSuccess(pageInfo);
+                return pageResponse;
+                }
 
-    @GetMapping
-    @Log("查询${apiAlias}")
-    @ApiOperation("查询${apiAlias}")
-    @PreAuthorize("@el.check('${changeClassName}:list')")
-    public ResponseEntity<Object> query(${className}QueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(${changeClassName}Service.queryAll(criteria,pageable),HttpStatus.OK);
-    }
+                /**
+                * 保存或修改
+                */
+                @ApiOperation(value = " 保存或修改")
+                @PostMapping("/save")
+                @AnonymousAccess
+                public DetailResponse<${className}> save(@RequestBody ${className} ${changeClassName}) {
+                ${changeClassName}Service.save(${changeClassName});
+                DetailResponse<${className}> success = ResponseUtil.detailSuccess(${changeClassName});
+                return success;
+                }
 
-    @PostMapping
-    @Log("新增${apiAlias}")
-    @ApiOperation("新增${apiAlias}")
-    @PreAuthorize("@el.check('${changeClassName}:add')")
-    public ResponseEntity<Object> create(@Validated @RequestBody ${className} resources){
-        return new ResponseEntity<>(${changeClassName}Service.create(resources),HttpStatus.CREATED);
-    }
 
-    @PutMapping
-    @Log("修改${apiAlias}")
-    @ApiOperation("修改${apiAlias}")
-    @PreAuthorize("@el.check('${changeClassName}:edit')")
-    public ResponseEntity<Object> update(@Validated @RequestBody ${className} resources){
-        ${changeClassName}Service.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+                /**
+                * 详情
+                */
+                @ApiOperation("详情")
+                @GetMapping("/detail/{${changeClassName}Id}")
+                @AnonymousAccess
+                public DetailResponse<${className}> detail(@PathVariable Long ${changeClassName}Id) {
+                ${className}  ${changeClassName}=new ${className}();
+                ${changeClassName}.setId(${changeClassName}Id);
+                ${changeClassName} = ${changeClassName}Service.get(${changeClassName});
+                DetailResponse<${className}> success = ResponseUtil.detailSuccess(${changeClassName});
+                return success;
+                }
 
-    @Log("删除${apiAlias}")
-    @ApiOperation("删除${apiAlias}")
-    @PreAuthorize("@el.check('${changeClassName}:del')")
-    @DeleteMapping
-    public ResponseEntity<Object> delete(@RequestBody ${pkColumnType}[] ids) {
-        ${changeClassName}Service.deleteAll(ids);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+
+                /**
+                * 删除操作
+                */
+                @ApiOperation("删除")
+                @PostMapping("/delete/{${changeClassName}Id}")
+                @AnonymousAccess
+                public CommonResponse delete(@PathVariable Long ${changeClassName}Id) {
+                ${className}	${changeClassName}=new ${className}();
+                ${changeClassName}.setId(${changeClassName}Id);
+                int count=${changeClassName}Service.delete(${changeClassName});
+                CommonResponse success = ResponseUtil.success();
+                return success;
+                }
+
+
+
+                /**
+                * 删除操作-批量
+                */
+                @ApiOperation("批量删除")
+                @PostMapping("/batch/delete")
+                @AnonymousAccess
+                public CommonResponse batchDelete(@RequestBody BatchDTO batchDTO) {
+                // 获取当前操作人信息
+                ${className}QueryDTO	queryDTO=new ${className}QueryDTO();
+
+                queryDTO.setBatchIdList(batchDTO.getBatchIdList());
+                int count=${changeClassName}Service.batchDelete(queryDTO);
+                CommonResponse success = ResponseUtil.success();
+                return success;
+                }
 }

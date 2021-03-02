@@ -23,6 +23,11 @@
             <artifactId>commons-configuration</artifactId>
             <version>${configuration.version}</version>
         </dependency>
+        <!--模板引擎-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.github.yoma</groupId>
             <artifactId>yoma-common</artifactId>

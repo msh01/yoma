@@ -132,7 +132,8 @@ public class GenUtil {
         templates = getFrontTemplateNames();
         for (String templateName : templates) {
             Template template = engine.getTemplate("generator/front/" + templateName + ".ftl");
-            String path = tempPath + "eladmin-web" + File.separator;
+            // String path = tempPath + "eladmin-web" + File.separator;
+            String path = "D:\\yoma-generate" + File.separator;
             String apiPath = path + "src" + File.separator + "api" + File.separator;
             String srcPath = path + "src" + File.separator + "views" + File.separator + genMap.get("changeClassName").toString() + File.separator;
             String filePath = getFrontFilePath(templateName, apiPath, srcPath, genMap.get("changeClassName").toString());
@@ -349,7 +350,9 @@ public class GenUtil {
      */
     private static String getAdminFilePath(String templateName, GenConfig genConfig, String className, String rootPath) {
         String projectPath = rootPath + File.separator + genConfig.getModuleName();
-        String packagePath = projectPath + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator;
+        // modifed by msh 避免直接生成代码到项目里面，造成不可预知的覆盖现有代码的问题。应该在项目外部生成代码
+        // String packagePath = projectPath + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator;
+        String packagePath = "D:\\yoma-generate" + File.separator;
         if (!ObjectUtils.isEmpty(genConfig.getPack())) {
             packagePath += genConfig.getPack().replace(".", File.separator) + File.separator;
         }
@@ -393,13 +396,13 @@ public class GenUtil {
      * 定义前端文件路径以及名称
      */
     private static String getFrontFilePath(String templateName, String apiPath, String path, String apiName) {
-
+        path = "D:\\yoma-generate" + File.separator;
         if ("api".equals(templateName)) {
-            return apiPath + File.separator + apiName + ".js";
+            return path + apiName + ".js";
         }
 
         if ("index".equals(templateName)) {
-            return path + File.separator + "index.vue";
+            return path + "index.vue";
         }
 
         return null;

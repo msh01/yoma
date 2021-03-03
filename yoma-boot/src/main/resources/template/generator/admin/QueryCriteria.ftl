@@ -136,6 +136,15 @@ public class ${className}QueryCriteria{
                     </if>
                 </#list>
             </#if>
+
+            <#if betweens??>
+                <#list betweens as column>
+                    <if test="${column.changeColumnName} != null<#if column.changeColumnName != column.changeColumnName> and ${column.changeColumnName} != null</#if>   <#if column.columnType == 'String'> and ${column.changeColumnName} != ''</#if>  ">
+                        AND a.${column.columnName} BETWEEN ${"#"}{begin${column.changeColumnName?cap_first}} AND ${"#"}
+                        {end${column.changeColumnName?cap_first}}
+                    </if>
+                </#list>
+            </#if>
             <if test="batchIdList != null  and !batchIdList.isEmpty()  ">
                 AND
                 id IN

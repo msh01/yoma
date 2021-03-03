@@ -58,8 +58,8 @@
             <#if betweens??>
                 <#list betweens as column>
                     <if test="${column.changeColumnName} != null<#if column.changeColumnName != column.changeColumnName> and ${column.changeColumnName} != null</#if>   <#if column.columnType == 'String'> and ${column.changeColumnName} != ''</#if>  ">
-                        AND a.${column.columnName} BETWEEN ${"#"}{begin${column.changeColumnName?cap_first}} AND ${"#"}
-                        {end${column.changeColumnName?cap_first}}
+                        AND a.${column.columnName}
+                        BETWEEN ${"#"}{begin${column.changeColumnName?cap_first}} AND ${"#"}{end${column.changeColumnName?cap_first}}
                     </if>
                 </#list>
             </#if>
@@ -153,22 +153,22 @@
         <#else>
         </#if>-->
         DELETE FROM ${tableName}
-       <#-- <#if table.parentExists>
-            <#list columns as column>
-                <#if table.parentTableFk == column.columnName>
-                    <choose>
-                        <when test="id !=null and id != ''">
-                            <where> ${table.primaryKeyColumnName} = ${"#"}{id} </where>
-                        </when>
-                        <otherwise>
-                            <where> ${table.parentTableFk} = ${"#"}{${column.changeColumnName}} </where>
-                        </otherwise>
-                    </choose>
-                </#if>
-            </#list>
-        <#else>
-        </#if>-->
-        <where>   id= ${"#"}{id} </where>
+        <#-- <#if table.parentExists>
+             <#list columns as column>
+                 <#if table.parentTableFk == column.columnName>
+                     <choose>
+                         <when test="id !=null and id != ''">
+                             <where> ${table.primaryKeyColumnName} = ${"#"}{id} </where>
+                         </when>
+                         <otherwise>
+                             <where> ${table.parentTableFk} = ${"#"}{${column.changeColumnName}} </where>
+                         </otherwise>
+                     </choose>
+                 </#if>
+             </#list>
+         <#else>
+         </#if>-->
+        <where> id= ${"#"}{id}</where>
     </delete>
 
 

@@ -1,22 +1,9 @@
-/*
-*  Copyright 2019-2020 Zheng Jie
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*  http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
 package ${package}.domain;
 
 import lombok.Data;
 import cn.hutool.core.bean.BeanUtil;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
 import io.swagger.annotations.ApiModelProperty;
 import cn.hutool.core.bean.copier.CopyOptions;
 import javax.persistence.*;
@@ -37,7 +24,8 @@ import java.math.BigDecimal;
 import java.io.Serializable;
 
 /**
-* @website https://el-admin.vip
+* 既是实体对象，又是数据传输对象（接收页面请求参数），同时又是值对象（为页面提供渲染所需数据）
+* 基于lombok ，所以无需生成getter 和 setter方法
 * @description /
 * @author ${author}
 * @date ${date}
@@ -45,7 +33,7 @@ import java.io.Serializable;
 @Entity
 @Data
 @Table(name="${tableName}")
-public class ${className} implements Serializable {
+public class ${className} extends DataEntity<${className}>{
 <#if columns??>
     <#list columns as column>
 

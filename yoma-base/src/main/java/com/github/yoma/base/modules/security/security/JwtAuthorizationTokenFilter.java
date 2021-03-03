@@ -40,9 +40,11 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String authToken = jwtTokenUtil.getToken(request);
-        OnlineUser onlineUser = null;
+        // OnlineUser onlineUser = null;
+        OnlineUser onlineUser = new OnlineUser() ;
         try {
-            onlineUser = (OnlineUser)redisTemplate.opsForValue().get(onlineKey + authToken);
+            Object o = redisTemplate.opsForValue().get(onlineKey + authToken);
+            onlineUser = (OnlineUser) o;
         } catch (ExpiredJwtException e) {
             log.error(e.getMessage());
         }

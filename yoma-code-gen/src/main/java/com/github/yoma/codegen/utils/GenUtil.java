@@ -377,8 +377,11 @@ public class GenUtil {
             return packagePath + "service" + File.separator + "dto" + File.separator + className + "Dto.java";
         }
 
+        // if ("QueryCriteria".equals(templateName)) {
+        //     return packagePath + "service" + File.separator + "dto" + File.separator + className + "QueryCriteria.java";
+        // }
         if ("QueryCriteria".equals(templateName)) {
-            return packagePath + "service" + File.separator + "dto" + File.separator + className + "QueryCriteria.java";
+            return packagePath + "mapper" + File.separator + className + "dao.xml";
         }
 
         if ("Mapper".equals(templateName)) {

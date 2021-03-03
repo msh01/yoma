@@ -1,87 +1,5 @@
-/*
-*  Copyright 2019-2020 Zheng Jie
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*  http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
-package ${package}.service.dto;
-
-import lombok.Data;
-<#if queryHasTimestamp>
-    import java.sql.Timestamp;
-</#if>
-<#if queryHasBigDecimal>
-    import java.math.BigDecimal;
-</#if>
-<#if betweens??>
-    import java.util.List;
-</#if>
-<#if queryColumns??>
-    import me.zhengjie.annotation.Query;
-</#if>
-
-/**
-* @website https://el-admin.vip
-* @author ${author}
-* @date ${date}
-**/
-@Data
-public class ${className}QueryCriteria{
-<#if queryColumns??>
-    <#list queryColumns as column>
-
-        <#if column.queryType = '='>
-            /** 精确 */
-            @Query
-            private ${column.columnType} ${column.changeColumnName};
-        </#if>
-        <#if column.queryType = 'Like'>
-            /** 模糊 */
-            @Query(type = Query.Type.INNER_LIKE)
-            private ${column.columnType} ${column.changeColumnName};
-        </#if>
-        <#if column.queryType = '!='>
-            /** 不等于 */
-            @Query(type = Query.Type.NOT_EQUAL)
-            private ${column.columnType} ${column.changeColumnName};
-        </#if>
-        <#if column.queryType = 'NotNull'>
-            /** 不为空 */
-            @Query(type = Query.Type.NOT_NULL)
-            private ${column.columnType} ${column.changeColumnName};
-        </#if>
-        <#if column.queryType = '>='>
-            /** 大于等于 */
-            @Query(type = Query.Type.GREATER_THAN)
-            private ${column.columnType} ${column.changeColumnName};
-        </#if>
-        <#if column.queryType = '<='>
-            /** 小于等于 */
-            @Query(type = Query.Type.LESS_THAN)
-            private ${column.columnType} ${column.changeColumnName};
-        </#if>
-    </#list>
-</#if>
-<#if betweens??>
-    <#list betweens as column>
-        /** BETWEEN */
-        @Query(type = Query.Type.BETWEEN)
-        private List<${column.columnType}> ${column.changeColumnName};
-    </#list>
-</#if>
-}
-
-
 <?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="${package}.dao.${className}Dao">
 
     <#-- 输出字段列 ,并去除末位引号-->
@@ -165,5 +83,104 @@ public class ${className}QueryCriteria{
         </choose>
     </select>
 
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ${tableName}(
+        <#assign insertField>
+            <#list columns as column>
+                <#if column.columnKey != 'PRI'>
+                    ${column.columnName},
+                </#if>
+            </#list>
+        </#assign>
+        ${insertField?substring(0, insertField?last_index_of(","))}
+        ) VALUES (
+        <#assign insertJavaField>
+            <#list columns as column>
+                <#if column.columnKey != 'PRI'>
+                    ${"#"}{${column.changeColumnName}},
+                </#if>
+            </#list>
+        </#assign>
+        ${insertJavaField?substring(0, insertJavaField?last_index_of(","))}
+        )
+    </insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        INSERT INTO ${tableName}
+        (
+        <#assign insertField>
+            <#list columns as column>
+                <#if column.columnKey != 'PRI'>
+                    ${column.columnName},
+                </#if>
+            </#list>
+        </#assign>
+        ${insertField?substring(0, insertField?last_index_of(","))}
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            <#assign insertJavaField>
+                <#list columns as column>
+                    <#if column.columnKey != 'PRI'>
+                        ${"#"}{item.${column.changeColumnName}},
+                    </#if>
+                </#list>
+            </#assign>
+            ${insertJavaField?substring(0, insertJavaField?last_index_of(","))}
+            )
+        </foreach>
+    </insert>
+
+    <update id="update">
+        UPDATE ${tableName}
+        <set>
+            <#list columns as column>
+                <if test="${column.changeColumnName} != null <#if column.columnType == 'String'>and ${column.changeColumnName} != ''</#if> ">
+                    ${column.columnName} = ${"#"}{${column.changeColumnName}},
+                </if>
+            </#list>
+        </set>
+        <where>
+            id = ${"#"}{id}
+        </where>
+    </update>
+
+    <delete id="delete">
+        <#--<#if table.delFlagExists>
+            UPDATE ${tableName} SET
+            delFlag= ${"#"}{DEL_FLAG_DELETE}
+        <#else>
+        </#if>-->
+        DELETE FROM ${tableName}
+       <#-- <#if table.parentExists>
+            <#list columns as column>
+                <#if table.parentTableFk == column.columnName>
+                    <choose>
+                        <when test="id !=null and id != ''">
+                            <where> ${table.primaryKeyColumnName} = ${"#"}{id} </where>
+                        </when>
+                        <otherwise>
+                            <where> ${table.parentTableFk} = ${"#"}{${column.changeColumnName}} </where>
+                        </otherwise>
+                    </choose>
+                </#if>
+            </#list>
+        <#else>
+        </#if>-->
+        <where>   id= ${"#"}{id} </where>
+    </delete>
+
+
+    <delete id="batchDelete">
+        DELETE FROM ${tableName}
+        <where>
+            id IN
+            <foreach collection="batchIdList" item="id" index="index"
+                     open="(" close=")" separator=",">
+                ${"#"}{id}
+            </foreach>
+        </where>
+    </delete>
 
 </mapper>

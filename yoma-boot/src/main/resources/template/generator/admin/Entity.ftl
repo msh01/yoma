@@ -32,6 +32,7 @@ import java.io.Serializable;
 **/
 @Entity
 @Data
+@ApiModel(value = "${className}", description="${apiAlias}实体对象")
 @Table(name="${tableName}")
 public class ${className} extends DataEntity<${className}>{
 <#if columns??>

@@ -1,54 +1,40 @@
-/*
-*  Copyright 2019-2020 Zheng Jie
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*  http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
 package ${package}.service.dto;
 
 import lombok.Data;
+import javax.persistence.*;
 <#if hasTimestamp>
-import java.sql.Timestamp;
+    import java.sql.Timestamp;
 </#if>
 <#if hasBigDecimal>
-import java.math.BigDecimal;
+    import java.math.BigDecimal;
 </#if>
 import java.io.Serializable;
 <#if !auto && pkColumnType = 'Long'>
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+    import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+    import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 </#if>
-
 /**
-* @website https://el-admin.vip
-* @description /
+* @description Query对象 用来接收页面传递过来的查询条件参数,并将其传递到serveice层，dao层
 * @author ${author}
 * @date ${date}
 **/
+@ApiModel(value = "${className}QueryDTO", description="${apiAlias} 查询参数对象")
 @Data
-public class ${className}Dto implements Serializable {
-<#if columns??>
-    <#list columns as column>
+public class ${className}QueryDTO extends BaseQueryDTO  {
 
-    <#if column.remark != ''>
-    /** ${column.remark} */
-    </#if>
-    <#if column.columnKey = 'PRI'>
-    <#if !auto && pkColumnType = 'Long'>
-    /** 防止精度丢失 */
-    @JsonSerialize(using= ToStringSerializer.class)
-    </#if>
-    </#if>
-    private ${column.columnType} ${column.changeColumnName};
+    private static final long serialVersionUID = 1L;
+<#if queryColumns??>
+    <#list queryColumns as column >
+        @ApiModelProperty(value = "${column.remark}")
+        private ${column.columnType} ${column.changeColumnName};
+    </#list>
+</#if>
+<#if betweens??>
+    <#list betweens as column>
+        @ApiModelProperty(value = "范围筛选 ${column.remark}开始")
+        private ${column.columnType} begin${column.changeColumnName?cap_first};
+        @ApiModelProperty(value = "范围筛选 ${column.remark}结束")
+        private ${column.columnType} end${column.changeColumnName?cap_first};
     </#list>
 </#if>
 }

@@ -1,17 +1,14 @@
 /*
- *  Copyright 2019-2020 Zheng Jie
+ * Copyright 2019-2020 Zheng Jie
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 package com.github.yoma.codegen.utils;
 
@@ -33,7 +30,6 @@ import java.util.*;
 
 import static com.github.yoma.common.utils.FileUtil.SYS_TEM_DIR;
 
-
 /**
  * 代码生成
  *
@@ -52,21 +48,33 @@ public class GenUtil {
 
     public static final String EXTRA = "auto_increment";
 
+    public static final String generateTargetDir = "D:\\yoma-generate";
+
     /**
      * 获取后端代码模板名称
      *
      * @return List
      */
+    // private static List<String> getAdminTemplateNames() {
+    // List<String> templateNames = new ArrayList<>();
+    // templateNames.add("Entity");
+    // templateNames.add("Dto");
+    // templateNames.add("Mapper");
+    // templateNames.add("Controller");
+    // templateNames.add("QueryCriteria");
+    // templateNames.add("Service");
+    // templateNames.add("ServiceImpl");
+    // templateNames.add("Repository");
+    // return templateNames;
+    // }
     private static List<String> getAdminTemplateNames() {
         List<String> templateNames = new ArrayList<>();
         templateNames.add("Entity");
         templateNames.add("Dto");
-        templateNames.add("Mapper");
+        templateNames.add("MapperXml");
         templateNames.add("Controller");
-        templateNames.add("QueryCriteria");
         templateNames.add("Service");
-        templateNames.add("ServiceImpl");
-        templateNames.add("Repository");
+        templateNames.add("Dao");
         return templateNames;
     }
 
@@ -87,7 +95,8 @@ public class GenUtil {
         List<Map<String, Object>> genList = new ArrayList<>();
         // 获取后端模版
         List<String> templates = getAdminTemplateNames();
-        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
+        TemplateEngine engine =
+            TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
         for (String templateName : templates) {
             Map<String, Object> map = new HashMap<>(1);
             Template template = engine.getTemplate("generator/admin/" + templateName + ".ftl");
@@ -110,15 +119,18 @@ public class GenUtil {
 
     public static String download(List<ColumnInfo> columns, GenConfig genConfig) throws IOException {
         // 拼接的路径：/tmpeladmin-gen-temp/，这个路径在Linux下需要root用户才有权限创建,非root用户会权限错误而失败，更改为： /tmp/eladmin-gen-temp/
-        // String tempPath =SYS_TEM_DIR + "eladmin-gen-temp" + File.separator + genConfig.getTableName() + File.separator;
+        // String tempPath =SYS_TEM_DIR + "eladmin-gen-temp" + File.separator + genConfig.getTableName() +
+        // File.separator;
         String tempPath = SYS_TEM_DIR + "eladmin-gen-temp" + File.separator + genConfig.getTableName() + File.separator;
         Map<String, Object> genMap = getGenMap(columns, genConfig);
-        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
+        TemplateEngine engine =
+            TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
         // 生成后端代码
         List<String> templates = getAdminTemplateNames();
         for (String templateName : templates) {
             Template template = engine.getTemplate("generator/admin/" + templateName + ".ftl");
-            String filePath = getAdminFilePath(templateName, genConfig, genMap.get("className").toString(), tempPath + "eladmin" + File.separator);
+            String filePath = getAdminFilePath(templateName, genConfig, genMap.get("className").toString(),
+                tempPath + "eladmin" + File.separator);
             assert filePath != null;
             File file = new File(filePath);
             // 如果非覆盖生成
@@ -133,10 +145,13 @@ public class GenUtil {
         for (String templateName : templates) {
             Template template = engine.getTemplate("generator/front/" + templateName + ".ftl");
             // String path = tempPath + "eladmin-web" + File.separator;
-            String path = "D:\\yoma-generate" + File.separator;
+
+            String path = generateTargetDir + File.separator;
             String apiPath = path + "src" + File.separator + "api" + File.separator;
-            String srcPath = path + "src" + File.separator + "views" + File.separator + genMap.get("changeClassName").toString() + File.separator;
-            String filePath = getFrontFilePath(templateName, apiPath, srcPath, genMap.get("changeClassName").toString());
+            String srcPath = path + "src" + File.separator + "views" + File.separator
+                + genMap.get("changeClassName").toString() + File.separator;
+            String filePath =
+                getFrontFilePath(templateName, apiPath, srcPath, genMap.get("changeClassName").toString());
             assert filePath != null;
             File file = new File(filePath);
             // 如果非覆盖生成
@@ -151,12 +166,14 @@ public class GenUtil {
 
     public static void generatorCode(List<ColumnInfo> columnInfos, GenConfig genConfig) throws IOException {
         Map<String, Object> genMap = getGenMap(columnInfos, genConfig);
-        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
+        TemplateEngine engine =
+            TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
         // 生成后端代码
         List<String> templates = getAdminTemplateNames();
         for (String templateName : templates) {
             Template template = engine.getTemplate("generator/admin/" + templateName + ".ftl");
-            String filePath = getAdminFilePath(templateName, genConfig, genMap.get("className").toString(), System.getProperty("user.dir"));
+            String filePath = getAdminFilePath(templateName, genConfig, genMap.get("className").toString(),
+                System.getProperty("user.dir"));
 
             assert filePath != null;
             File file = new File(filePath);
@@ -173,7 +190,8 @@ public class GenUtil {
         templates = getFrontTemplateNames();
         for (String templateName : templates) {
             Template template = engine.getTemplate("generator/front/" + templateName + ".ftl");
-            String filePath = getFrontFilePath(templateName, genConfig.getApiPath(), genConfig.getPath(), genMap.get("changeClassName").toString());
+            String filePath = getFrontFilePath(templateName, genConfig.getApiPath(), genConfig.getPath(),
+                genMap.get("changeClassName").toString());
 
             assert filePath != null;
             File file = new File(filePath);
@@ -209,8 +227,10 @@ public class GenUtil {
         String changeClassName = StringUtils.toCamelCase(genConfig.getTableName());
         // 判断是否去除表前缀
         if (StringUtils.isNotEmpty(genConfig.getPrefix())) {
-            className = StringUtils.toCapitalizeCamelCase(StrUtil.removePrefix(genConfig.getTableName(), genConfig.getPrefix()));
-            changeClassName = StringUtils.toCamelCase(StrUtil.removePrefix(genConfig.getTableName(), genConfig.getPrefix()));
+            className = StringUtils
+                .toCapitalizeCamelCase(StrUtil.removePrefix(genConfig.getTableName(), genConfig.getPrefix()));
+            changeClassName =
+                StringUtils.toCamelCase(StrUtil.removePrefix(genConfig.getTableName(), genConfig.getPrefix()));
         }
         // 保存类名
         genMap.put("className", className);
@@ -295,7 +315,7 @@ public class GenUtil {
             listMap.put("formType", StringUtils.isNotBlank(column.getFormType()) ? column.getFormType() : "Input");
             // 小写开头的字段名称
             listMap.put("changeColumnName", changeColumnName);
-            //大写开头的字段名称
+            // 大写开头的字段名称
             listMap.put("capitalColumnName", capitalColumnName);
             // 字典名称
             listMap.put("dictName", column.getDictName());
@@ -348,11 +368,13 @@ public class GenUtil {
     /**
      * 定义后端文件路径以及名称
      */
-    private static String getAdminFilePath(String templateName, GenConfig genConfig, String className, String rootPath) {
+    private static String getAdminFilePath(String templateName, GenConfig genConfig, String className,
+        String rootPath) {
         String projectPath = rootPath + File.separator + genConfig.getModuleName();
         // modifed by msh 避免直接生成代码到项目里面，造成不可预知的覆盖现有代码的问题。应该在项目外部生成代码
-        // String packagePath = projectPath + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator;
-        String packagePath = "D:\\yoma-generate" + File.separator;
+        // String packagePath = projectPath + File.separator + "src" + File.separator + "main" + File.separator + "java"
+        // + File.separator;
+        String packagePath = generateTargetDir + File.separator;
         if (!ObjectUtils.isEmpty(genConfig.getPack())) {
             packagePath += genConfig.getPack().replace(".", File.separator) + File.separator;
         }
@@ -362,34 +384,34 @@ public class GenUtil {
         }
 
         if ("Controller".equals(templateName)) {
-            return packagePath + "rest" + File.separator + className + "Controller.java";
+            return packagePath + "controller" + File.separator + className + "Controller.java";
         }
 
         if ("Service".equals(templateName)) {
             return packagePath + "service" + File.separator + className + "Service.java";
         }
 
-        if ("ServiceImpl".equals(templateName)) {
-            return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
-        }
+        // if ("ServiceImpl".equals(templateName)) {
+        // return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
+        // }
 
         if ("Dto".equals(templateName)) {
-            return packagePath + "service" + File.separator + "dto" + File.separator + className + "Dto.java";
+            return packagePath + "dto" + File.separator + className + "QueryDTO.java";
         }
 
         // if ("QueryCriteria".equals(templateName)) {
-        //     return packagePath + "service" + File.separator + "dto" + File.separator + className + "QueryCriteria.java";
+        // return packagePath + "service" + File.separator + "dto" + File.separator + className + "QueryCriteria.java";
         // }
-        if ("QueryCriteria".equals(templateName)) {
-            return packagePath + "mapper" + File.separator + className + "dao.xml";
+        if ("MapperXml".equals(templateName)) {
+            return packagePath + "mapper" + File.separator + className + "Dao.xml";
         }
 
-        if ("Mapper".equals(templateName)) {
-            return packagePath + "service" + File.separator + "mapstruct" + File.separator + className + "Mapper.java";
-        }
+        // if ("Mapper".equals(templateName)) {
+        // return packagePath + "service" + File.separator + "mapstruct" + File.separator + className + "Mapper.java";
+        // }
 
-        if ("Repository".equals(templateName)) {
-            return packagePath + "repository" + File.separator + className + "Repository.java";
+        if ("Dao".equals(templateName)) {
+            return packagePath + "repository" + File.separator + className + "Dao.java";
         }
 
         return null;
@@ -399,7 +421,7 @@ public class GenUtil {
      * 定义前端文件路径以及名称
      */
     private static String getFrontFilePath(String templateName, String apiPath, String path, String apiName) {
-        path = "D:\\yoma-generate" + File.separator;
+        path = generateTargetDir + File.separator;
         if ("api".equals(templateName)) {
             return path + apiName + ".js";
         }

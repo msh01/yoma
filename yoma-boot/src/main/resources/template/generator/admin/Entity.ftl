@@ -25,7 +25,7 @@ import java.io.Serializable;
 
 /**
 * 既是实体对象，又是数据传输对象（接收页面请求参数），同时又是值对象（为页面提供渲染所需数据）
-* 基于lombok ，所以无需生成getter 和 setter方法  qqqqqqqqqqq
+* 基于lombok ，所以无需生成getter 和 setter方法
 * @description /
 * @author ${author}
 * @date ${date}

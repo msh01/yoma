@@ -1,4 +1,4 @@
-package com.github.yoma.common.config;
+package com.github.yoma.config.config;
 
 import com.github.yoma.common.utils.SecurityUtils;
 import org.springframework.security.core.GrantedAuthority;

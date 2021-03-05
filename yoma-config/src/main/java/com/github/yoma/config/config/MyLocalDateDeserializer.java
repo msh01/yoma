@@ -1,4 +1,4 @@
-package com.github.yoma.common.config;
+package com.github.yoma.config.config;
 
 import java.io.IOException;
 import java.time.Instant;

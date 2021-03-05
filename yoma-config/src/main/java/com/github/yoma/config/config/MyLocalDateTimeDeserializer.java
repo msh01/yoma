@@ -1,4 +1,4 @@
-package com.github.yoma.common.config;
+package com.github.yoma.config.config;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

@@ -1,4 +1,4 @@
-package com.github.yoma.common.config;
+package com.github.yoma.config.config;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.github.yoma.common.config;
+package com.github.yoma.config.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

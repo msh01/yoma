@@ -65,7 +65,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.yoma</groupId>
-            <artifactId>yoma-common</artifactId>
+            <artifactId>yoma-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

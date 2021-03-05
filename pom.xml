@@ -56,6 +56,7 @@
     <!--个人认为，maven继承是为了可以引用父亲maven项目的依赖、属性和类，聚合是为了可以引用兄弟maven项目的依赖、属性和类-->
     <modules>
         <module>yoma-common</module>
+        <module>yoma-config</module>
         <module>yoma-code-gen</module>
         <!-- <module>yoma-security</module>-->
         <!--<module>yoma-mqtt</module>-->

@@ -20,6 +20,8 @@ mqtt:
     enabled: true
   send:
     enabled: true
+generator:
+  enabled: false
 ftp:
   root-path: /var/ftp/test/iotconfig/
 last-value-key: lastValueTest

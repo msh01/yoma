@@ -19,6 +19,8 @@ mqtt:
     enabled: true
 server:
   port: 8383
+generator:
+  enabled: true
 ftp:
   root-path: /var/ftp/test/iotconfig/
 last-value-key: lastValueDev

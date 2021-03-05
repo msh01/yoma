@@ -28,6 +28,7 @@ import com.github.yoma.codegen.utils.GenUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,9 @@ public class GeneratorServiceImpl implements GeneratorService {
     private static final Logger log = LoggerFactory.getLogger(GeneratorServiceImpl.class);
     @PersistenceContext
     private EntityManager em;
+    @Value("${generator.enabled}")
+    private Boolean generatorEnabled;
+
 
     private final ColumnInfoRepository columnInfoRepository;
 
@@ -61,18 +65,19 @@ public class GeneratorServiceImpl implements GeneratorService {
     public Object getTables() {
         // 使用预编译防止sql注入
         String sql =
-            "select table_name ,create_time , engine, table_collation, table_comment from information_schema.tables "
-                + "where table_schema = (select database()) " + "order by create_time desc";
+                "select table_name ,create_time , engine, table_collation, table_comment from information_schema.tables "
+                        + "where table_schema = (select database()) " + "order by create_time desc";
         Query query = em.createNativeQuery(sql);
-        return query.getResultList();
+        List resultList = query.getResultList();
+        return resultList;
     }
 
     @Override
     public Object getTables(String name, int[] startEnd) {
         // 使用预编译防止sql注入
         String sql =
-            "select table_name ,create_time , engine, table_collation, table_comment from information_schema.tables "
-                + "where table_schema = (select database()) " + "and table_name like ? order by create_time desc";
+                "select table_name ,create_time , engine, table_collation, table_comment from information_schema.tables "
+                        + "where table_schema = (select database()) " + "and table_name like ? order by create_time desc";
         Query query = em.createNativeQuery(sql);
         query.setFirstResult(startEnd[0]);
         query.setMaxResults(startEnd[1] - startEnd[0]);
@@ -80,11 +85,11 @@ public class GeneratorServiceImpl implements GeneratorService {
         List result = query.getResultList();
         List<TableInfo> tableInfos = new ArrayList<>();
         for (Object obj : result) {
-            Object[] arr = (Object[])obj;
-            tableInfos.add(new TableInfo(arr[0], arr[1], arr[2], arr[3], ObjectUtil.isNotEmpty(arr[4]) ? arr[4] : "-"));
+            Object[] arr = (Object[]) obj;
+            tableInfos.add(new TableInfo(arr[0], arr[1], arr[2], arr[3], ObjectUtil.isNotEmpty(arr[4]) ? arr[4] : "-", generatorEnabled));
         }
         Query query1 = em.createNativeQuery(
-            "SELECT COUNT(*) from information_schema.tables where table_schema = (select database())");
+                "SELECT COUNT(*) from information_schema.tables where table_schema = (select database())");
         Object totalElements = query1.getSingleResult();
         return PageUtil.toPage(tableInfos, totalElements);
     }
@@ -104,18 +109,18 @@ public class GeneratorServiceImpl implements GeneratorService {
     public List<ColumnInfo> query(String tableName) {
         // 使用预编译防止sql注入
         String sql =
-            "select column_name, is_nullable, data_type, column_comment, column_key, extra from information_schema.columns "
-                + "where table_name = ? and table_schema = (select database()) order by ordinal_position";
+                "select column_name, is_nullable, data_type, column_comment, column_key, extra from information_schema.columns "
+                        + "where table_name = ? and table_schema = (select database()) order by ordinal_position";
         Query query = em.createNativeQuery(sql);
         query.setParameter(1, tableName);
         List result = query.getResultList();
         List<ColumnInfo> columnInfos = new ArrayList<>();
         for (Object obj : result) {
-            Object[] arr = (Object[])obj;
+            Object[] arr = (Object[]) obj;
             columnInfos.add(new ColumnInfo(tableName, arr[0].toString(), "NO".equals(arr[1]), arr[2].toString(),
-                ObjectUtil.isNotNull(arr[3]) ? arr[3].toString() : null,
-                ObjectUtil.isNotNull(arr[4]) ? arr[4].toString() : null,
-                ObjectUtil.isNotNull(arr[5]) ? arr[5].toString() : null));
+                    ObjectUtil.isNotNull(arr[3]) ? arr[3].toString() : null,
+                    ObjectUtil.isNotNull(arr[4]) ? arr[4].toString() : null,
+                    ObjectUtil.isNotNull(arr[5]) ? arr[5].toString() : null));
         }
         return columnInfos;
     }
@@ -126,7 +131,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         for (ColumnInfo columnInfo : columnInfoList) {
             // 根据字段名称查找
             List<ColumnInfo> columns = columnInfos.stream()
-                .filter(c -> c.getColumnName().equals(columnInfo.getColumnName())).collect(Collectors.toList());
+                    .filter(c -> c.getColumnName().equals(columnInfo.getColumnName())).collect(Collectors.toList());
             // 如果能找到，就修改部分可能被字段
             if (CollectionUtil.isNotEmpty(columns)) {
                 ColumnInfo column = columns.get(0);
@@ -146,7 +151,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         for (ColumnInfo columnInfo : columnInfos) {
             // 根据字段名称查找
             List<ColumnInfo> columns = columnInfoList.stream()
-                .filter(c -> c.getColumnName().equals(columnInfo.getColumnName())).collect(Collectors.toList());
+                    .filter(c -> c.getColumnName().equals(columnInfo.getColumnName())).collect(Collectors.toList());
             // 如果找不到，就代表字段被删除了，则需要删除该字段
             if (CollectionUtil.isEmpty(columns)) {
                 columnInfoRepository.delete(columnInfo);
@@ -183,7 +188,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public void download(GenConfig genConfig, List<ColumnInfo> columns, HttpServletRequest request,
-        HttpServletResponse response) {
+                         HttpServletResponse response) {
         if (genConfig.getId() == null) {
             throw new BadRequestException("请先配置生成器");
         }

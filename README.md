@@ -6,7 +6,10 @@
 
 平台采用前后端分离架构，基于如下流行的开源框架，易上手+便于后期维护
 
+
+
 **后端：**
+
 spring boot + jwt +spring security + mybatis +swagger + spring  data redis + spring data mongo 
 
 **前端：**
@@ -82,17 +85,41 @@ docker-compose up -d
 
 ### 后端部署
 
-**打包并把打好后jar包上传到服务器（可借助xftp工具）**
+####  打包并把打好后jar包上传到服务器（可借助xftp或者winscp） 
 
-在后端项目的根目录执行 `mvn:package` 命令，打好的jar包在yoma-boot模块的target目录下
+在后端项目的根目录执行 `mvn package` 命令，打好的jar包在`yoma-boot`模块的target目录下
 
 上传到服务器的某个目录下，本人的jar包放置的绝对路径如下。后面的启动脚本里面的路径要和jar包的绝对路径一一对应
 
 ```shell
-# 测试环境
+# 测试环境jar包的路径
 /software/apps/test/yikong-boot-0.0.1-SNAPSHOT.jar
-# 生产环境
+# 生产环境jar包的路径
 /software/apps/prod/yikong-boot-0.0.1-SNAPSHOT.jar
+```
+
+#### 通过自动化脚本进行启动、重启、开机自启
+
+常用的启动、重启、开机自启等自动化脚本已经放在的**项目的autoshell目录**下。用工具把此脚本传输到服务器上，本人将自动化脚本放在了服务器的`/software/autoShell/` 目录下，不同的脚本，有不同的功能。
+
+请用chmod + xx.sh 为以下脚本赋予执行权限
+
+```shell
+# 每间隔10分钟执行一次，检测到后端服务关闭掉则自动重启
+autoRestartApp.sh
+# 手动启动或者重启服务
+restartApp.sh
+# 开机自启脚本
+severStartUp.sh
+```
+
+#### 运行日志查看
+
+```shell
+# 测试环境查看实时日志 末尾的时间换成当前时间
+tail -f /software/logs/test/sandtrading-boot/sandtrading-boot.2020-10-08.10.log
+# 生产环境查看实时日志 末尾的时间换成当前时间
+tail -f /software/logs/prod/sandtrading-boot/sandtrading-boot.2020-08-29.02.log
 ```
 
 
@@ -142,7 +169,26 @@ docker-compose up -d
 
 ## 进阶阅读
 
+（功能已实现，文档待完善）
 
+- 基于spring boot的maven 多模块的聚合继承
+- maven依赖重复导入导致bean被实例化两次无法启动的问题排查
+- spring boot整合swagger，并支持自动导出排版优美的PDF接口文档
+- spring boot整合fastdfs
+- 通过spring data mongo  来实现对mongodb 的复杂的分组聚合查询
+- Java8 localDateTime在spring boot应用中的全局日期格式化
+- spring boot应用对响应体进行全局封装，方便统一前后端交互的数据格式
+- spring boot应用对全局异常做拦截并包装响应体（无论实际错误是什么，给前端返回的http状态码应该始终为200，而不是500,400之类的）
+- 基于easypoi实现对复杂排版格式的excel的导出
+- spring boot+spring security+jwt实现前后端认证和鉴权
+- 基于@Aspect切面来实现对用户操作日志的自动记录
+- element ui的file-upload组件配合spring boot实现文件上传和下载
+- spring boot+logback实现按日期生成日志文件+自动删除超过30天的+日志级别
+- java表达式引擎的整合
+- 基于责任链模式实现对复杂场景的处理
+- rocketmq踩空总结：同一个java服务在不同环境的消费组名称必须保证不同，否则rocketmq会采用负载均衡策略进行消费，只有33%的概率会被当前服务消费成功
+- spring boot整合极光推送
+- spring boot整合华为推送
 
 
 ## 问题反馈

@@ -149,6 +149,8 @@ tail -f /software/logs/prod/sandtrading-boot/sandtrading-boot.2020-08-29.02.log
 
 （功能已实现，文档待完善）
 
+- [Intellij IDEA配置优化最佳实践](https://github.com/msh01/awesome_intellij_idea_config)
+
 - 基于spring boot的maven 多模块的聚合继承
 - maven依赖重复导入导致bean被实例化两次无法启动的问题排查
 - spring boot整合swagger，并支持自动导出排版优美的PDF接口文档

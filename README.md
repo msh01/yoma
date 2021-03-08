@@ -3,6 +3,7 @@
 一个**小而美**的低代码全栈开发平台，一键生成后端api接口+前端页面代码+在线接口文档，节省50%的前后端开发的工作量，平台代码100%开源。平台适用于企业信息化、政务、中小型互联网等项目
 
 平台采用前后端分离架构，基于如下流行的开源框架，易上手+便于后期维护
+
 **后端：**
 spring boot + jwt +spring security + mybatis +swagger + spring  data redis + spring data mongo 
 
@@ -12,20 +13,22 @@ vue +element ui + axios+vuex + vue router
 
 **开发工具：**
 
- 推荐 IDEA集成开发+Git版本管理+Navicat数据库连接+XShell服务器管理+nodepad++
+  IDEA+Git+Navicat+XShell+nodepad++
 
 
 ## 快速开始
 
 把项目源码克隆到本地，然后执行如下步骤
 
-**数据库等中间件安装**+数据库的初始化
+**数据库等中间件安装+数据库的初始化**
 
-- mysql+redis + rocketmq 等中间件的安装，基于docker compose 一个启动命令搞定； 当然如果你不擅长docker，可以不用docker用传统方式安装也可以，方法请自行百度。
+（以下安装方式基于docker。当然了，如果你不擅长docker，可以不用docker用传统方式安装也可以，方法请自行百度。）
+
+- mysql+redis + rocketmq 等中间件的安装，基于docker compose 一个启动命令搞定； 
 
 - 这些中间件可以安装在**本地**也可以安装在**服务器端**。安装前请确保你本地安装的有docker desktop或者服务器端安装的有docker compose
 
-- 找到项目目录中的启动模板文件`docker-compose.yml`， 在此文件所在的目录执行命令（模板文件中某些服务，比如 Gitlab、MongoDB、nexus、 如果用不到则可以注释掉）
+- 找到项目目录中的启动模板文件`docker-compose.yml`， 在此文件所在的目录执行命令（可以按需安装，模板文件中某些服务，比如 Gitlab、MongoDB、nexus、 如果用不到则可以注释掉）
 
 ```shell
 # 启动模板下中编排的所有docker服务。（本地不存在镜像则自动从远程拉取，过程可能较慢）

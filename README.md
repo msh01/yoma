@@ -76,6 +76,10 @@ docker-compose up -d
 - 把前端项目导入到IDEA里面，找到`package.json` 文件中的`"dev": "vue-cli-service serve",`点击左侧的三角箭头，选择`debug dev`即可完成启动。启动过程中没有任何报错信息，并自动打开登录页，则代表启动成功，
 - 后台登录的账户密码为admin  / 123456
 
+## 部署说明
+
+
+
 ## 开发计划
 
 当前版本 **v1.00**

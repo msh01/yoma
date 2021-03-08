@@ -8,11 +8,11 @@
 
 
 
-**后端：**
+**后端：https://github.com/msh01/yoma**
 
 spring boot + jwt +spring security + mybatis +swagger + spring  data redis + spring data mongo 
 
-**前端：**
+**前端：https://github.com/msh01/yoma-web**
 
 vue +element ui + axios+vuex + vue router 
 
@@ -145,28 +145,6 @@ tail -f /software/logs/prod/sandtrading-boot/sandtrading-boot.2020-08-29.02.log
 
 推出微服务版本的`yoma-cloud`, 整合spring cloud+k8s 
 
-## 致谢
-
-本项目基于或参考以下项目：
-
-1.  [eladmin](https://github.com/elunez/eladmin)
-
-   项目介绍：基于spring boot + spring data jpa + vue +element 的开发平台
-
-   参考部分：代码生成逻辑和前后端数据交互
-
-2. [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
-  
-   项目介绍： 一个基于Vue和Element的后台集成方案
-  
-   项目参考：布局和组建封装
-
-3. [jeesite](https://gitee.com/thinkgem/jeesite4)
-
-   项目介绍：基于（Spring Boot、Spring MVC、Apache Shiro、MyBatis、Beetl、Bootstrap、AdminLTE）的开发框架
-
-   项目参考：优雅的增删改查的封装
-
 ## 进阶阅读
 
 （功能已实现，文档待完善）
@@ -190,6 +168,30 @@ tail -f /software/logs/prod/sandtrading-boot/sandtrading-boot.2020-08-29.02.log
 - spring boot整合极光推送
 - spring boot整合华为推送
 
+## 致谢
+
+本项目基于或参考以下项目：
+
+1.  [eladmin](https://github.com/elunez/eladmin)
+
+   项目介绍：基于spring boot + spring data jpa + vue +element 的开发平台
+
+   参考部分：代码生成逻辑和前后端数据交互
+
+2. [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
+  
+   项目介绍： 一个基于Vue和Element的后台集成方案
+  
+   项目参考：布局和组建封装
+
+3. [jeesite](https://gitee.com/thinkgem/jeesite4)
+
+   项目介绍：基于（Spring Boot、Spring MVC、Apache Shiro、MyBatis、Beetl、Bootstrap、AdminLTE）的开发框架
+
+   项目参考：优雅的增删改查的封装
+
+- 
+
 
 ## 问题反馈
 
@@ -204,4 +206,5 @@ tail -f /software/logs/prod/sandtrading-boot/sandtrading-boot.2020-08-29.02.log
 
 ## License
 
- 
+ Apache License Version 2.0
+

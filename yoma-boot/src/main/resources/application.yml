@@ -46,24 +46,24 @@ file:
   maxSize: 100
   path: ''
 huawei:
-  appId: 102336851
-  appSecret: 7f60c9ad87938a92d875e739602d0a6b75fae87014ff43f2d64623b293720862
+  appId: 100000001
+  appSecret: 7777777777777777777777777777777777777777777
 jpush:
-  appKey: 3af9623fb64a6f164a06d962
-  masterSecret: 661b4332da159c3f232d2a9b
+  appKey: aaaaaaaaaaaaaaaa
+  masterSecret: 66666666666666666666666
   liveTime: 1000
   apnsProduction: false # 是否生成环境，true表示生成环境
 aliyun:
   sms:
-    accessKeyId: LTAI4G234253455vaQYZJ1ppmt
-    accessKeySecret: 123344354546464666
-    signName: 商砼云
+    accessKeyId: L8888888888888888888
+    accessKeySecret: 666666666666666666666
+    signName: YOMA
     templates:
       identify:
-        templateCode: SMS_189560261
+        templateCode: SMS_11111111
       register-verify:
-        templateCode: SMS_189560258
+        templateCode: SMS_22222223
       password-find:
-        templateCode: SMS_189560257
+        templateCode: SMS_333333333
       alarm:
-        templateCode: SMS_189712502
+        templateCode: SMS_444444444

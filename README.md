@@ -81,7 +81,47 @@ docker-compose up -d
   
 
 - 把前端项目导入到IDEA里面，找到`package.json` 文件中的`"dev": "vue-cli-service serve",`点击左侧的三角箭头，选择`debug dev`即可完成启动。启动过程中没有任何报错信息，并自动打开登录页，则代表启动成功，
+
 - 后台登录的账户密码为admin  / 123456
+
+
+
+## 生成的代码说明
+
+针对某表，一般会生成如下六个类文件
+
+#### Domain
+
+- 类名为表名转驼峰命名
+- `Entity`既是数据表映射的实体类，又可以当做接收页面保存、修改操作请求的DTO
+- 所有的`Entity`均继承自`DataEntity`
+
+#### QueryDTO
+
+- 类名为`**QueryDTO`
+- QueryDTO用来接收页面传递过来的查询条件参数（通常是列表查询）
+- 所有的QueryDTO均继承自BaseQueryDTO
+
+#### mapper
+
+- 命名一般为`**Dao`，继承自CrudDao
+- 生成的dao有保存、批量保存、详情、列表查询，删除、批量删除六个方法。此六个方法继承自父类的方法
+
+#### mapper.xml
+
+- 命名一般为`**Dao.xml`
+- 对应的dao里面的增删改查的若干方法
+- 详情查询和列表查询的`select 子句` 往往可以共用，所以单独抽离出来，放在一个mybatis的SQL片段中，id 命名为`**Columns`；对应的跨表左连接查询也往往是可以共用的，单独抽离出来，SQL片段的id命名为`**Joins`
+
+#### 业务层business
+
+- 命名一般为`**Service,继承自`CrudService`
+- 所有的业务逻辑的处理在此类完成
+- 分页的功能实现基于开源的[pagehelper](https://github.com/pagehelper/Mybatis-PageHelper/blob/master/README_zh.md)
+
+#### web层
+
+一个标准的restfull接口。除了详情查询，剩下的接口统一走post请求（标准的rest请求方法传参不方便，而且个别公司的防火墙可能不支持）。
 
 ## 部署说明
 
@@ -138,6 +178,10 @@ tail -f /software/logs/prod/sandtrading-boot/sandtrading-boot.2020-08-29.02.log
 2. 管理后台基本实现所有表的CRUD操作；
 3. 后端服务能够对参数进行检验。
 4. 文档优化（待完成）
+
+**V 1.5.0 完成以下目标：**
+
+- 系统数据库和反向生成的目标数据库区分开，更加灵活
 
 **V 2.0.0 完成以下目标：**
 

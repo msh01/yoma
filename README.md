@@ -12,6 +12,8 @@
 
 spring boot + jwt +spring security + mybatis +swagger + spring  data redis + spring data mongo 
 
+接入的SDK有：阿里云短信、极光推送、华为推送
+
 **前端：https://github.com/msh01/yoma-web**
 
 vue +element ui + axios+vuex + vue router 
@@ -27,7 +29,7 @@ vue +element ui + axios+vuex + vue router
 
 **数据库等中间件安装+数据库的初始化**
 
-（以下安装方式基于docker。当然了，如果你不擅长docker，可以不用docker用传统方式安装也可以，方法请自行百度。）
+（以下安装方式基于docker。当然了，如果你不擅长docker，也可以跳过下面的说明，采用传统方式安装，方法请自行百度。）
 
 - mysql+redis + rocketmq 等中间件的安装，基于docker compose 一个启动命令搞定； 
 
@@ -140,6 +142,7 @@ tail -f /software/logs/prod/sandtrading-boot/sandtrading-boot.2020-08-29.02.log
 **V 2.0.0 完成以下目标：**
 
 1.  `flowable`工作流引擎的接入，并与项目原有的账户角色打通。（`flowable`衍生自`activiti`，和后者是同一个作者）
+2.  基于此平台衍生出一个物联网平台的脚手架出来，涉及到mqtt、opcua等协议支持，多mqtt broker等
 
 **v 3.0.0** 
 

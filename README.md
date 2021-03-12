@@ -88,42 +88,14 @@ docker-compose up -d
 
 ## 生成的代码说明
 
-针对某表，一般会生成如下六个类文件
+- 针对某表，一般会生成如下六个后端代码文件（分别对应标准mvc架构中的controller、service、dao、mappe.xml、entity、queryDTO ）和两个前端代码文件（一个vue文件一个js文件）
+- 注意：entity并不是jpa中标准意义上的entity，仅仅是用作接收页面增加、编辑的请求参数和返回查询结果集。queryDTO 用作接受列表查询的参数，比如`like、==、between`。
+- 把生成的代码分别拷贝到对应的包下即可
+- 前端代码拷贝时，注意目录。因为配置菜单路由时会用到
 
 #### Domain
 
-- 类名为表名转驼峰命名
-- `Entity`既是数据表映射的实体类，又可以当做接收页面保存、修改操作请求的DTO
-- 所有的`Entity`均继承自`DataEntity`
 
-#### QueryDTO
-
-- 类名为`**QueryDTO`
-- QueryDTO用来接收页面传递过来的查询条件参数（通常是列表查询）
-- 所有的QueryDTO均继承自BaseQueryDTO
-
-#### mapper
-
-- 命名一般为`**Dao`，继承自CrudDao
-- 生成的dao有保存、批量保存、详情、列表查询，删除、批量删除六个方法。此六个方法继承自父类的方法
-
-#### mapper.xml
-
-- 命名一般为`**Dao.xml`
-- 对应的dao里面的增删改查的若干方法
-- 详情查询和列表查询的`select 子句` 往往可以共用，所以单独抽离出来，放在一个mybatis的SQL片段中，id 命名为`**Columns`；对应的跨表左连接查询也往往是可以共用的，单独抽离出来，SQL片段的id命名为`**Joins`
-
-#### 业务层business
-
-- 命名一般为`**Service,继承自`CrudService`
-- 所有的业务逻辑的处理在此类完成
-- 分页的功能实现基于开源的[pagehelper](https://github.com/pagehelper/Mybatis-PageHelper/blob/master/README_zh.md)
-
-#### web层
-
-一个标准的restfull接口。除了详情查询，剩下的接口统一走post请求（标准的rest请求方法传参不方便，而且个别公司的防火墙可能不支持）。
-
-## 部署说明
 
 ### 后端部署
 
@@ -210,7 +182,7 @@ tail -f /software/logs/prod/sandtrading-boot/sandtrading-boot.2020-08-29.02.log
 - spring boot+spring security+jwt实现前后端认证和鉴权
 - 基于@Aspect切面来实现对用户操作日志的自动记录
 - element ui的file-upload组件配合spring boot实现文件上传和下载
-- spring boot+logback实现按日期生成日志文件+自动删除超过30天的+日志级别
+- spring boot+logback实现按日期生成日志文件+自动删除超过30天的+日志级别（以及为什么日志文件没有自动切割的问题）
 - java表达式引擎的整合
 - 基于责任链模式实现对复杂场景的处理
 - rocketmq踩空总结：同一个java服务在不同环境的消费组名称必须保证不同，否则rocketmq会采用负载均衡策略进行消费，只有33%的概率会被当前服务消费成功

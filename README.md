@@ -197,7 +197,7 @@ tail -f /software/logs/prod/sandtrading-boot/sandtrading-boot.2020-08-29.02.log
 
    项目介绍：基于spring boot + spring data jpa + vue +element 的开发平台
 
-   参考部分：代码生成逻辑和前后端数据交互
+   参考部分：代码生成逻辑和认证鉴权
 
 2. [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
   
@@ -209,7 +209,7 @@ tail -f /software/logs/prod/sandtrading-boot/sandtrading-boot.2020-08-29.02.log
 
    项目介绍：基于（Spring Boot、Spring MVC、Apache Shiro、MyBatis、Beetl、Bootstrap、AdminLTE）的开发框架
 
-   项目参考：优雅的增删改查的封装
+   项目参考：优雅简练的基于泛型的增删改查的封装
 
 - 
 
@@ -219,7 +219,6 @@ tail -f /software/logs/prod/sandtrading-boot/sandtrading-boot.2020-08-29.02.log
  * 开发者有问题或者好的建议可以用Issues反馈交流，请给出详细信息
  * 在开发交流群中应讨论开发、业务和合作问题
  * 如果真的需要微信群里提问，请在提问前先完成以下过程：
-    * 请仔细阅读本项目文档，特别是是[**FAQ**](https://linlinjava.gitbook.io/litemall/faq)，查看能否解决；
     * 请阅读[提问的智慧](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/master/README-zh_CN.md)；
     * 请百度或谷歌相关技术；
     * 请查看相关技术的官方文档，例如微信小程序的官方文档；

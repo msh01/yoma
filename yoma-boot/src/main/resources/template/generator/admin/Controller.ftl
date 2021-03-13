@@ -25,8 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/api/${changeClassName}")
 public class ${className}Controller {
 
-                @Autowired
-                private ${className}Service ${changeClassName}Service;
+@Autowired
+private ${className}Service ${changeClassName}Service;
 
 /**
 * 列表查询
@@ -35,8 +35,8 @@ public class ${className}Controller {
 @PostMapping("list")
 @AnonymousAccess
 public PageResponse<${className}> list(@RequestBody ${className}QueryDTO queryDTO) {
-                PageInfo<${className}> pageInfo = ${changeClassName}Service.findPage(queryDTO);
-                PageResponse<${className}> pageResponse = ResponseUtil.pageSuccess(pageInfo);
+PageInfo<${className}> pageInfo = ${changeClassName}Service.findPage(queryDTO);
+PageResponse<${className}> pageResponse = ResponseUtil.pageSuccess(pageInfo);
 return pageResponse;
 }
 
@@ -47,38 +47,38 @@ return pageResponse;
 @PostMapping("/save")
 @AnonymousAccess
 public DetailResponse<${className}> save(@RequestBody ${className} ${changeClassName}) {
-                ${changeClassName}Service.save(${changeClassName});
-                DetailResponse<${className}> success = ResponseUtil.detailSuccess(${changeClassName});
-                return success;
-                }
+${changeClassName}Service.save(${changeClassName});
+DetailResponse<${className}> success = ResponseUtil.detailSuccess(${changeClassName});
+return success;
+}
 
 
-                /**
-                * 详情
-                */
-                @ApiOperation("详情")
-                @GetMapping("/detail/{${changeClassName}Id}")
+/**
+* 详情
+*/
+@ApiOperation("详情")
+@GetMapping("/detail/{${changeClassName}Id}")
 @AnonymousAccess
 public DetailResponse<${className}> detail(@PathVariable Long ${changeClassName}Id) {
-                ${className}  ${changeClassName}=new ${className}();
-                ${changeClassName}.setId(${changeClassName}Id);
-                ${changeClassName} = ${changeClassName}Service.get(${changeClassName});
-                DetailResponse<${className}> success = ResponseUtil.detailSuccess(${changeClassName});
-                return success;
-                }
+${className}  ${changeClassName}=new ${className}();
+${changeClassName}.setId(${changeClassName}Id);
+${changeClassName} = ${changeClassName}Service.get(${changeClassName});
+DetailResponse<${className}> success = ResponseUtil.detailSuccess(${changeClassName});
+return success;
+}
 
 
-                /**
-                * 删除操作
-                */
-                @ApiOperation("删除")
-                @PostMapping("/delete/{${changeClassName}Id}")
+/**
+* 删除操作
+*/
+@ApiOperation("删除")
+@PostMapping("/delete/{${changeClassName}Id}")
 @AnonymousAccess
 public CommonResponse delete(@PathVariable Long ${changeClassName}Id) {
-                ${className}	${changeClassName}=new ${className}();
-                ${changeClassName}.setId(${changeClassName}Id);
-                int count=${changeClassName}Service.delete(${changeClassName});
-                CommonResponse success = ResponseUtil.success();
+${className}    ${changeClassName}=new ${className}();
+${changeClassName}.setId(${changeClassName}Id);
+int count=${changeClassName}Service.delete(${changeClassName});
+CommonResponse success = ResponseUtil.success();
 return success;
 }
 
@@ -91,11 +91,11 @@ return success;
 @AnonymousAccess
 public CommonResponse batchDelete(@RequestBody BatchDTO batchDTO) {
 // 获取当前操作人信息
-${className}QueryDTO	queryDTO=new ${className}QueryDTO();
+${className}QueryDTO    queryDTO=new ${className}QueryDTO();
 
-                queryDTO.setBatchIdList(batchDTO.getBatchIdList());
-                int count=${changeClassName}Service.batchDelete(queryDTO);
-                CommonResponse success = ResponseUtil.success();
-                return success;
-                }
+queryDTO.setBatchIdList(batchDTO.getBatchIdList());
+int count=${changeClassName}Service.batchDelete(queryDTO);
+CommonResponse success = ResponseUtil.success();
+return success;
+}
 }

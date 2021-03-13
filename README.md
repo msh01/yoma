@@ -20,7 +20,7 @@ vue +element ui + axios+vuex + vue router
 
 **开发工具：**
 
-  IDEA+Git+Navicat+XShell+nodepad++
+  IDEA+Git+Navicat+XShell+Notepad++
 
 
 ## 快速开始
@@ -91,6 +91,7 @@ docker-compose up -d
 - 针对某表，一般会生成如下六个后端代码文件（分别对应标准mvc架构中的controller、service、dao、mappe.xml、entity、queryDTO ）和两个前端代码文件（一个vue文件一个js文件）
 - 注意：entity并不是jpa中标准意义上的entity，仅仅是用作接收页面增加、编辑的请求参数和返回查询结果集。queryDTO 用作接受列表查询的参数，比如`like、==、between`。
 - 把生成的代码分别拷贝到对应的包下即可
+- 小窍门：@AnonymousAccess注解加在某个controller内部某方法上代表开启此接口的匿名访问，不会被权限验证拦截。为了方便调试，可以在开发的时候加上，上线前移除
 - 前端代码拷贝时，注意目录。因为配置菜单路由时会用到
 
 #### Domain

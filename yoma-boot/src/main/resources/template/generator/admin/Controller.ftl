@@ -33,7 +33,6 @@ public class ${className}Controller {
                 */
                 @ApiOperation(value = " 列表查询")
                 @PostMapping("list")
-                @AnonymousAccess
                 public PageResponse<${className}> list(@RequestBody ${className}QueryDTO queryDTO) {
                 PageInfo<${className}> pageInfo = ${changeClassName}Service.findPage(queryDTO);
                 PageResponse<${className}> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -45,7 +44,6 @@ public class ${className}Controller {
                 */
                 @ApiOperation(value = " 保存或修改")
                 @PostMapping("/save")
-                @AnonymousAccess
                 public DetailResponse<${className}> save(@RequestBody ${className} ${changeClassName}) {
                 ${changeClassName}Service.save(${changeClassName});
                 DetailResponse<${className}> success = ResponseUtil.detailSuccess(${changeClassName});
@@ -58,7 +56,6 @@ public class ${className}Controller {
                 */
                 @ApiOperation("详情")
                 @GetMapping("/detail/{${changeClassName}Id}")
-                @AnonymousAccess
                 public DetailResponse<${className}> detail(@PathVariable Long ${changeClassName}Id) {
                 ${className}  ${changeClassName}=new ${className}();
                 ${changeClassName}.setId(${changeClassName}Id);
@@ -73,7 +70,6 @@ public class ${className}Controller {
                 */
                 @ApiOperation("删除")
                 @PostMapping("/delete/{${changeClassName}Id}")
-                @AnonymousAccess
                 public CommonResponse delete(@PathVariable Long ${changeClassName}Id) {
                 ${className}	${changeClassName}=new ${className}();
                 ${changeClassName}.setId(${changeClassName}Id);
@@ -89,7 +85,6 @@ public class ${className}Controller {
                 */
                 @ApiOperation("批量删除")
                 @PostMapping("/batch/delete")
-                @AnonymousAccess
                 public CommonResponse batchDelete(@RequestBody BatchDTO batchDTO) {
                 // 获取当前操作人信息
                 ${className}QueryDTO	queryDTO=new ${className}QueryDTO();

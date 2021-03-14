@@ -1,18 +1,17 @@
 package com.github.yoma.core.controller;
 
-import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.core.domain.CoreMenu;
-import com.github.yoma.core.dto.CoreMenuQueryDTO;
-import com.github.yoma.core.service.CoreMenuService;
+import com.github.pagehelper.PageInfo;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.github.yoma.core.domain.CoreMenu;
+import com.github.yoma.core.dto.CoreMenuQueryDTO;
+import com.github.yoma.core.service.CoreMenuService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +35,6 @@ public class CoreMenuController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @PostMapping("list")
-    @AnonymousAccess
     public CommonResponse<CoreMenu> list(@RequestBody CoreMenuQueryDTO queryDTO) {
         PageInfo<CoreMenu> pageInfo = coreMenuService.findPage(queryDTO);
         PageResponse<CoreMenu> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -48,7 +46,6 @@ public class CoreMenuController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public CommonResponse<CoreMenu> save(@RequestBody CoreMenu coreMenu) {
         coreMenuService.save(coreMenu);
         CommonResponse<CoreMenu> success = ResponseUtil.detailSuccess(coreMenu);
@@ -60,7 +57,6 @@ public class CoreMenuController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{coreMenuId}")
-    @AnonymousAccess
     public CommonResponse<CoreMenu> detail(@PathVariable Long coreMenuId) {
         CoreMenu coreMenu = new CoreMenu();
         coreMenu.setId(coreMenuId);
@@ -74,7 +70,6 @@ public class CoreMenuController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{coreMenuId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long coreMenuId) {
         CoreMenu coreMenu = new CoreMenu();
         coreMenu.setId(coreMenuId);
@@ -88,7 +83,6 @@ public class CoreMenuController extends BaseController {
      */
     @ApiOperation("批量删除")
     @PostMapping("/batch/delete")
-    @AnonymousAccess
     public CommonResponse batchDelete(@RequestBody BatchDTO batchDTO) {
         // 获取当前操作人信息
         CoreMenuQueryDTO queryDTO = new CoreMenuQueryDTO();

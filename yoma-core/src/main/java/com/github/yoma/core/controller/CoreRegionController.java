@@ -1,18 +1,17 @@
 package com.github.yoma.core.controller;
 
-import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.core.domain.CoreRegion;
-import com.github.yoma.core.dto.CoreRegionQueryDTO;
-import com.github.yoma.core.service.CoreRegionService;
+import com.github.pagehelper.PageInfo;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.github.yoma.core.domain.CoreRegion;
+import com.github.yoma.core.dto.CoreRegionQueryDTO;
+import com.github.yoma.core.service.CoreRegionService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +35,6 @@ public class CoreRegionController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @PostMapping("list")
-    @AnonymousAccess
     public CommonResponse<CoreRegion> list(@RequestBody CoreRegionQueryDTO queryDTO) {
         PageInfo<CoreRegion> pageInfo = coreRegionService.findPage(queryDTO);
         PageResponse<CoreRegion> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -48,7 +46,6 @@ public class CoreRegionController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public CommonResponse<CoreRegion> save(@RequestBody CoreRegion coreRegion) {
         coreRegionService.save(coreRegion);
         CommonResponse<CoreRegion> success = ResponseUtil.detailSuccess(coreRegion);
@@ -60,7 +57,6 @@ public class CoreRegionController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{coreRegionId}")
-    @AnonymousAccess
     public CommonResponse<CoreRegion> detail(@PathVariable Long coreRegionId) {
         CoreRegion coreRegion = new CoreRegion();
         coreRegion.setId(coreRegionId);
@@ -74,7 +70,6 @@ public class CoreRegionController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{coreRegionId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long coreRegionId) {
         CoreRegion coreRegion = new CoreRegion();
         coreRegion.setId(coreRegionId);
@@ -88,7 +83,6 @@ public class CoreRegionController extends BaseController {
      */
     @ApiOperation("批量删除")
     @PostMapping("/batch/delete")
-    @AnonymousAccess
     public CommonResponse batchDelete(@RequestBody BatchDTO batchDTO) {
         // 获取当前操作人信息
         CoreRegionQueryDTO queryDTO = new CoreRegionQueryDTO();

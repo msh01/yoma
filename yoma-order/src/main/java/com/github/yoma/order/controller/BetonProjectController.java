@@ -1,20 +1,19 @@
 package com.github.yoma.order.controller;
 
-import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import com.github.pagehelper.PageInfo;
 import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.order.domain.BetonProject;
-import com.github.yoma.order.dto.BetonProjectQueryDTO;
-import com.github.yoma.order.service.BetonProjectService;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.DetailResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
+import com.github.yoma.order.domain.BetonProject;
+import com.github.yoma.order.dto.BetonProjectQueryDTO;
+import com.github.yoma.order.service.BetonProjectService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +36,6 @@ public class BetonProjectController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @GetMapping("list")
-    @AnonymousAccess
     public PageResponse<BetonProject> list(  BetonProjectQueryDTO queryDTO) {
         PageInfo<BetonProject> pageInfo = betonProjectService.findPage(queryDTO);
         PageResponse<BetonProject> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -49,7 +47,6 @@ public class BetonProjectController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public DetailResponse<BetonProject> save(@RequestBody BetonProject betonProject) {
         betonProjectService.save(betonProject);
         DetailResponse<BetonProject> success = ResponseUtil.detailSuccess(betonProject);
@@ -62,7 +59,6 @@ public class BetonProjectController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{betonProjectId}")
-    @AnonymousAccess
     public DetailResponse<BetonProject> detail(@PathVariable Long betonProjectId) {
         BetonProject  betonProject=new BetonProject();
         betonProject.setId(betonProjectId);
@@ -77,7 +73,6 @@ public class BetonProjectController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{betonProjectId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long betonProjectId) {
         BetonProject	betonProject=new BetonProject();
 		betonProject.setId(betonProjectId);

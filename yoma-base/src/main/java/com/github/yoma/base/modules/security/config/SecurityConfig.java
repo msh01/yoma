@@ -1,9 +1,9 @@
 package com.github.yoma.base.modules.security.config;
 
-import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.base.modules.security.security.JwtAuthenticationEntryPoint;
-import com.github.yoma.base.modules.security.security.JwtAuthorizationTokenFilter;
-import com.github.yoma.base.modules.security.service.JwtUserDetailsService;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -26,9 +26,10 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import com.github.yoma.base.modules.security.security.JwtAuthenticationEntryPoint;
+import com.github.yoma.base.modules.security.security.JwtAuthorizationTokenFilter;
+import com.github.yoma.base.modules.security.service.JwtUserDetailsService;
+import com.github.yoma.common.annotation.AnonymousAccess;
 
 @Configuration
 @EnableWebSecurity
@@ -119,6 +120,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 文件
                 .antMatchers("/avatar/**").permitAll()
                 .antMatchers("/file/**").permitAll()
+            .antMatchers("/auth/**").permitAll()
                 // 放行OPTIONS请求
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/druid/**").permitAll()

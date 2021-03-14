@@ -1,19 +1,18 @@
 package com.github.yoma.order.controller;
 
-import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.order.domain.BetonCheckingSetting;
-import com.github.yoma.order.dto.BetonCheckingSettingQueryDTO;
-import com.github.yoma.order.service.BetonCheckingSettingService;
+import com.github.pagehelper.PageInfo;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.DetailResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.github.yoma.order.domain.BetonCheckingSetting;
+import com.github.yoma.order.dto.BetonCheckingSettingQueryDTO;
+import com.github.yoma.order.service.BetonCheckingSettingService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +36,6 @@ public class BetonCheckingSettingController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @GetMapping("list")
-    @AnonymousAccess
     public PageResponse<BetonCheckingSetting> list(BetonCheckingSettingQueryDTO queryDTO) {
         PageInfo<BetonCheckingSetting> pageInfo = betonCheckingSettingService.findPage(queryDTO);
         PageResponse<BetonCheckingSetting> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -49,7 +47,6 @@ public class BetonCheckingSettingController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public DetailResponse<BetonCheckingSetting> save(@RequestBody BetonCheckingSetting betonCheckingSetting) {
         betonCheckingSettingService.save(betonCheckingSetting);
         DetailResponse<BetonCheckingSetting> success = ResponseUtil.detailSuccess(betonCheckingSetting);
@@ -61,7 +58,6 @@ public class BetonCheckingSettingController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{betonCheckingSettingId}")
-    @AnonymousAccess
     public DetailResponse<BetonCheckingSetting> detail(@PathVariable Long betonCheckingSettingId) {
         BetonCheckingSetting betonCheckingSetting = new BetonCheckingSetting();
         betonCheckingSetting.setId(betonCheckingSettingId);
@@ -75,7 +71,6 @@ public class BetonCheckingSettingController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{betonCheckingSettingId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long betonCheckingSettingId) {
         BetonCheckingSetting betonCheckingSetting = new BetonCheckingSetting();
         betonCheckingSetting.setId(betonCheckingSettingId);
@@ -89,7 +84,6 @@ public class BetonCheckingSettingController extends BaseController {
      */
     @ApiOperation("批量删除")
     @PostMapping("/batch/delete")
-    @AnonymousAccess
     public CommonResponse batchDelete(@RequestBody BatchDTO batchDTO) {
         // 获取当前操作人信息
         BetonCheckingSettingQueryDTO queryDTO = new BetonCheckingSettingQueryDTO();

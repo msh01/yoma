@@ -1,20 +1,19 @@
 package com.github.yoma.core.controller;
 
-import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import com.github.pagehelper.PageInfo;
 import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.core.domain.ProcunitPerform;
-import com.github.yoma.core.dto.ProcunitPerformQueryDTO;
-import com.github.yoma.core.service.ProcunitPerformService;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.DetailResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
+import com.github.yoma.core.domain.ProcunitPerform;
+import com.github.yoma.core.dto.ProcunitPerformQueryDTO;
+import com.github.yoma.core.service.ProcunitPerformService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +36,6 @@ public class ProcunitPerformController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @PostMapping("list")
-    @AnonymousAccess
     public PageResponse<ProcunitPerform> list(@RequestBody ProcunitPerformQueryDTO queryDTO) {
         PageInfo<ProcunitPerform> pageInfo = procunitPerformService.findPage(queryDTO);
         PageResponse<ProcunitPerform> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -49,7 +47,6 @@ public class ProcunitPerformController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public DetailResponse<ProcunitPerform> save(@RequestBody ProcunitPerform procunitPerform) {
         procunitPerformService.save(procunitPerform);
         DetailResponse<ProcunitPerform> success = ResponseUtil.detailSuccess(procunitPerform);
@@ -62,7 +59,6 @@ public class ProcunitPerformController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{procunitPerformId}")
-    @AnonymousAccess
     public DetailResponse<ProcunitPerform> detail(@PathVariable Long procunitPerformId) {
         ProcunitPerform  procunitPerform=new ProcunitPerform();
         procunitPerform.setId(procunitPerformId);
@@ -77,7 +73,6 @@ public class ProcunitPerformController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{procunitPerformId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long procunitPerformId) {
         ProcunitPerform	procunitPerform=new ProcunitPerform();
 		procunitPerform.setId(procunitPerformId);

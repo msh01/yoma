@@ -5,15 +5,15 @@ import org.springframework.web.bind.annotation.*;
 
 import com.github.pagehelper.PageInfo;
 import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.logging.domain.CoreSysLog;
-import com.github.yoma.logging.query.CoreSysLogQueryDTO;
-import com.github.yoma.logging.service.CoreSysLogService;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.DetailResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
+import com.github.yoma.logging.domain.CoreSysLog;
+import com.github.yoma.logging.query.CoreSysLogQueryDTO;
+import com.github.yoma.logging.service.CoreSysLogService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +36,6 @@ public class CoreSysLogController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @PostMapping("list")
-    @AnonymousAccess
     public PageResponse<CoreSysLog> list(@RequestBody CoreSysLogQueryDTO queryDTO) {
         PageInfo<CoreSysLog> pageInfo = coreSysLogService.findPage(queryDTO);
         PageResponse<CoreSysLog> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -48,7 +47,6 @@ public class CoreSysLogController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public DetailResponse<CoreSysLog> save(@RequestBody CoreSysLog coreSysLog) {
         coreSysLogService.save(coreSysLog);
         DetailResponse<CoreSysLog> success = ResponseUtil.detailSuccess(coreSysLog);
@@ -61,7 +59,6 @@ public class CoreSysLogController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{coreSysLogId}")
-    @AnonymousAccess
     public DetailResponse<CoreSysLog> detail(@PathVariable Long coreSysLogId) {
         CoreSysLog  coreSysLog=new CoreSysLog();
         coreSysLog.setId(coreSysLogId);
@@ -76,7 +73,6 @@ public class CoreSysLogController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{coreSysLogId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long coreSysLogId) {
         CoreSysLog	coreSysLog=new CoreSysLog();
 		coreSysLog.setId(coreSysLogId);

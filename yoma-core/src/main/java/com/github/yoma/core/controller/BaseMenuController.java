@@ -1,29 +1,28 @@
 package com.github.yoma.core.controller;
 
-import cn.hutool.core.collection.CollectionUtil;
-import com.github.yoma.common.utils.SecurityUtils;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.github.pagehelper.PageInfo;
-import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.core.domain.BaseMenu;
-import com.github.yoma.core.dto.BaseMenuQueryDTO;
-import com.github.yoma.core.service.BaseMenuService;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.DetailResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
+import com.github.yoma.common.utils.SecurityUtils;
+import com.github.yoma.core.domain.BaseMenu;
+import com.github.yoma.core.dto.BaseMenuQueryDTO;
+import com.github.yoma.core.service.BaseMenuService;
 
+import cn.hutool.core.collection.CollectionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 系统菜单RestFull服务
@@ -41,20 +40,17 @@ public class BaseMenuController extends BaseController {
 
     @ApiOperation("返回全部的菜单")
     @GetMapping(value = "/lazy")
-    @AnonymousAccess
     public ResponseEntity<Object> query(@RequestParam Long pid) {
         return new ResponseEntity<>(baseMenuService.getMenus(pid), HttpStatus.OK);
     }
 
     // @ApiOperation("返回全部的菜单")
     // @GetMapping(value = "/lazy/{type}")
-    // @AnonymousAccess
-    // public ResponseEntity<Object> querytest(@PathVariable Integer type) {
+    // // public ResponseEntity<Object> querytest(@PathVariable Integer type) {
     //     return new ResponseEntity<>(baseMenuService.getMenus(pid), HttpStatus.OK);
     // }
 
     @GetMapping(value = "/build")
-    @AnonymousAccess
     @ApiOperation("获取前端所需菜单")
     public ResponseEntity<Object> buildMenus() {
         Long currentUserId = SecurityUtils.getCurrentUserId();
@@ -65,7 +61,6 @@ public class BaseMenuController extends BaseController {
 
     @ApiOperation("查询菜单:根据ID获取同级与上级数据")
     @PostMapping("/superior")
-    @AnonymousAccess
     public ResponseEntity<Object> getSuperior(@RequestBody List<Long> ids) {
         Set<BaseMenu> menuDtos = new LinkedHashSet<>();
         if (CollectionUtil.isNotEmpty(ids)) {
@@ -83,7 +78,6 @@ public class BaseMenuController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @GetMapping("list")
-    @AnonymousAccess
     public PageResponse<BaseMenu> list(BaseMenuQueryDTO queryDTO) {
         if (queryDTO.getPid() == null) {
             queryDTO.setPidIsNull(1);
@@ -95,7 +89,6 @@ public class BaseMenuController extends BaseController {
 
     @ApiOperation("根据菜单ID返回所有子节点ID，包含自身ID")
     @GetMapping(value = "/child")
-    @AnonymousAccess
     public ResponseEntity<Object> child(@RequestParam Long id) {
         Set<BaseMenu> menuSet = new HashSet<>();
         List<BaseMenu> menuList = this.baseMenuService.getMenus(id);
@@ -110,7 +103,6 @@ public class BaseMenuController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/create")
-    @AnonymousAccess
     public ResponseEntity<Object> save(@RequestBody BaseMenu baseMenu) {
         baseMenuService.create(baseMenu);
         DetailResponse<BaseMenu> success = ResponseUtil.detailSuccess(baseMenu);
@@ -119,7 +111,6 @@ public class BaseMenuController extends BaseController {
 
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/update")
-    @AnonymousAccess
     public ResponseEntity<Object> update(@RequestBody BaseMenu baseMenu) {
         baseMenuService.update(baseMenu);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -130,7 +121,6 @@ public class BaseMenuController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{baseMenuId}")
-    @AnonymousAccess
     public DetailResponse<BaseMenu> detail(@PathVariable Long baseMenuId) {
         BaseMenu baseMenu = new BaseMenu();
         baseMenu.setId(baseMenuId);
@@ -144,7 +134,6 @@ public class BaseMenuController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{baseMenuId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long baseMenuId) {
         BaseMenu baseMenu = new BaseMenu();
         baseMenu.setId(baseMenuId);
@@ -158,7 +147,6 @@ public class BaseMenuController extends BaseController {
      */
     @ApiOperation("批量删除")
     @PostMapping("/batch/delete")
-    @AnonymousAccess
     public CommonResponse batchDelete(@RequestBody BatchDTO batchDTO) {
         // 获取当前操作人信息
         BaseMenuQueryDTO queryDTO = new BaseMenuQueryDTO();

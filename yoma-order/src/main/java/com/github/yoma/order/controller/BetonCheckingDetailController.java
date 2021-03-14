@@ -4,16 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.github.pagehelper.PageInfo;
-import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.order.domain.BetonCheckingDetail;
-import com.github.yoma.order.dto.BetonCheckingDetailQueryDTO;
-import com.github.yoma.order.service.BetonCheckingDetailService;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.DetailResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
+import com.github.yoma.order.domain.BetonCheckingDetail;
+import com.github.yoma.order.dto.BetonCheckingDetailQueryDTO;
+import com.github.yoma.order.service.BetonCheckingDetailService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +36,6 @@ public class BetonCheckingDetailController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @GetMapping("list")
-    @AnonymousAccess
     public PageResponse<BetonCheckingDetail> list(BetonCheckingDetailQueryDTO queryDTO) {
         PageInfo<BetonCheckingDetail> pageInfo = betonCheckingDetailService.findPage(queryDTO);
         PageResponse<BetonCheckingDetail> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -49,7 +47,6 @@ public class BetonCheckingDetailController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @PostMapping("list")
-    @AnonymousAccess
     public PageResponse<BetonCheckingDetail> listPost(@RequestBody BetonCheckingDetailQueryDTO queryDTO) {
         PageInfo<BetonCheckingDetail> pageInfo = betonCheckingDetailService.findPage(queryDTO);
         PageResponse<BetonCheckingDetail> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -58,7 +55,6 @@ public class BetonCheckingDetailController extends BaseController {
 
     @ApiOperation(value = "测试存储过程调用")
     @PostMapping("createBetonCheckingDetail")
-    @AnonymousAccess
     public DetailResponse<BetonCheckingDetail>
         createBetonCheckingDetail(@RequestBody BetonCheckingDetailQueryDTO queryDTO) {
         BetonCheckingDetail betonCheckingDetail = betonCheckingDetailService.createBetonCheckingDetail(queryDTO);
@@ -72,7 +68,6 @@ public class BetonCheckingDetailController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public DetailResponse<BetonCheckingDetail> save(@RequestBody BetonCheckingDetailQueryDTO queryDTO) {
         BetonCheckingDetail betonCheckingDetail = betonCheckingDetailService.createBetonCheckingDetail(queryDTO);
         DetailResponse<BetonCheckingDetail> success = ResponseUtil.detailSuccess(betonCheckingDetail);
@@ -84,7 +79,6 @@ public class BetonCheckingDetailController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{betonCheckingDetailId}")
-    @AnonymousAccess
     public DetailResponse<BetonCheckingDetail> detail(@PathVariable Long betonCheckingDetailId) {
         BetonCheckingDetail betonCheckingDetail = new BetonCheckingDetail();
         betonCheckingDetail.setId(betonCheckingDetailId);
@@ -98,7 +92,6 @@ public class BetonCheckingDetailController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{betonCheckingDetailId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long betonCheckingDetailId) {
         BetonCheckingDetail betonCheckingDetail = new BetonCheckingDetail();
         betonCheckingDetail.setId(betonCheckingDetailId);
@@ -112,7 +105,6 @@ public class BetonCheckingDetailController extends BaseController {
      */
     @ApiOperation("批量删除")
     @PostMapping("/batch/delete")
-    @AnonymousAccess
     public CommonResponse batchDelete(@RequestBody BatchDTO batchDTO) {
         // 获取当前操作人信息
         BetonCheckingDetailQueryDTO queryDTO = new BetonCheckingDetailQueryDTO();

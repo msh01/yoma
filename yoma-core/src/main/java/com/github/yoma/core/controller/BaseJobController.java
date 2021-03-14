@@ -4,16 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.github.pagehelper.PageInfo;
-import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.core.domain.BaseJob;
-import com.github.yoma.core.dto.BaseJobQueryDTO;
-import com.github.yoma.core.service.BaseJobService;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.DetailResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
+import com.github.yoma.core.domain.BaseJob;
+import com.github.yoma.core.dto.BaseJobQueryDTO;
+import com.github.yoma.core.service.BaseJobService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +36,6 @@ public class BaseJobController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @GetMapping("list")
-    @AnonymousAccess
     public PageResponse<BaseJob> list(BaseJobQueryDTO queryDTO) {
         PageInfo<BaseJob> pageInfo = baseJobService.findPage(queryDTO);
         PageResponse<BaseJob> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -49,7 +47,6 @@ public class BaseJobController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public DetailResponse<BaseJob> save(@RequestBody BaseJob baseJob) {
         baseJobService.save(baseJob);
         DetailResponse<BaseJob> success = ResponseUtil.detailSuccess(baseJob);
@@ -61,7 +58,6 @@ public class BaseJobController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{baseJobId}")
-    @AnonymousAccess
     public DetailResponse<BaseJob> detail(@PathVariable Long baseJobId) {
         BaseJob baseJob = new BaseJob();
         baseJob.setId(baseJobId);
@@ -75,7 +71,6 @@ public class BaseJobController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{baseJobId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long baseJobId) {
         BaseJob baseJob = new BaseJob();
         baseJob.setId(baseJobId);
@@ -89,7 +84,6 @@ public class BaseJobController extends BaseController {
      */
     @ApiOperation("批量删除")
     @PostMapping("/batch/delete")
-    @AnonymousAccess
     public CommonResponse batchDelete(@RequestBody BatchDTO batchDTO) {
         // 获取当前操作人信息
         BaseJobQueryDTO queryDTO = new BaseJobQueryDTO();

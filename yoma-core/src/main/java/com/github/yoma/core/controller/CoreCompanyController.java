@@ -1,18 +1,17 @@
 package com.github.yoma.core.controller;
 
-import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.core.domain.CoreCompany;
-import com.github.yoma.core.dto.CoreCompanyQueryDTO;
-import com.github.yoma.core.service.CoreCompanyService;
+import com.github.pagehelper.PageInfo;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.github.yoma.core.domain.CoreCompany;
+import com.github.yoma.core.dto.CoreCompanyQueryDTO;
+import com.github.yoma.core.service.CoreCompanyService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +35,6 @@ public class CoreCompanyController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @PostMapping("list")
-    @AnonymousAccess
     public CommonResponse<CoreCompany> list(@RequestBody CoreCompanyQueryDTO queryDTO) {
         PageInfo<CoreCompany> pageInfo = coreCompanyService.findPage(queryDTO);
         PageResponse<CoreCompany> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -48,7 +46,6 @@ public class CoreCompanyController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public CommonResponse<CoreCompany> save(@RequestBody CoreCompany coreCompany) {
         coreCompanyService.save(coreCompany);
         CommonResponse<CoreCompany> success = ResponseUtil.detailSuccess(coreCompany);
@@ -60,7 +57,6 @@ public class CoreCompanyController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{coreCompanyId}")
-    @AnonymousAccess
     public CommonResponse<CoreCompany> detail(@PathVariable Long coreCompanyId) {
         CoreCompany coreCompany = new CoreCompany();
         coreCompany.setId(coreCompanyId);
@@ -74,7 +70,6 @@ public class CoreCompanyController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{coreCompanyId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long coreCompanyId) {
         CoreCompany coreCompany = new CoreCompany();
         coreCompany.setId(coreCompanyId);
@@ -88,7 +83,6 @@ public class CoreCompanyController extends BaseController {
      */
     @ApiOperation("批量删除")
     @PostMapping("/batch/delete")
-    @AnonymousAccess
     public CommonResponse batchDelete(@RequestBody BatchDTO batchDTO) {
         // 获取当前操作人信息
         CoreCompanyQueryDTO queryDTO = new CoreCompanyQueryDTO();

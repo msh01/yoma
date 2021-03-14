@@ -1,7 +1,9 @@
 package com.github.yoma.stc.controller;
 
-import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import com.github.pagehelper.PageInfo;
 import com.github.yoma.common.annotation.AnonymousAccess;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
@@ -11,9 +13,6 @@ import com.github.yoma.common.result.ResponseUtil;
 import com.github.yoma.stc.domain.StcConfig;
 import com.github.yoma.stc.dto.StcConfigQueryDTO;
 import com.github.yoma.stc.service.StcConfigService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +35,6 @@ public class StcConfigController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @PostMapping("list")
-    @AnonymousAccess
     public CommonResponse<StcConfig> list(@RequestBody StcConfigQueryDTO queryDTO) {
         PageInfo<StcConfig> pageInfo = stcConfigService.findPage(queryDTO);
         PageResponse<StcConfig> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -48,7 +46,6 @@ public class StcConfigController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public CommonResponse<StcConfig> save(@RequestBody StcConfig stcConfig) {
         stcConfigService.save(stcConfig);
         CommonResponse<StcConfig> success = ResponseUtil.success();
@@ -61,7 +58,6 @@ public class StcConfigController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{stcConfigId}")
-    @AnonymousAccess
     public CommonResponse<StcConfig> detail(@PathVariable Long stcConfigId) {
         StcConfig  stcConfig=new StcConfig();
         stcConfig.setId(stcConfigId);
@@ -76,7 +72,6 @@ public class StcConfigController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{stcConfigId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long stcConfigId) {
         StcConfig	stcConfig=new StcConfig();
 		stcConfig.setId(stcConfigId);

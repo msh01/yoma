@@ -1,20 +1,19 @@
 package com.github.yoma.core.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.github.pagehelper.PageInfo;
 import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.core.domain.PaymentRequest;
-import com.github.yoma.core.dto.PaymentRequestQueryDTO;
-import com.github.yoma.core.service.PaymentRequestService;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.DetailResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import com.github.pagehelper.PageInfo;
-
+import com.github.yoma.core.domain.PaymentRequest;
+import com.github.yoma.core.dto.PaymentRequestQueryDTO;
+import com.github.yoma.core.service.PaymentRequestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +36,6 @@ public class PaymentRequestController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @PostMapping("list")
-    @AnonymousAccess
     public PageResponse<PaymentRequest> list(@RequestBody PaymentRequestQueryDTO queryDTO) {
         PageInfo<PaymentRequest> pageInfo = paymentRequestService.findPage(queryDTO);
         PageResponse<PaymentRequest> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -49,7 +47,6 @@ public class PaymentRequestController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public DetailResponse<PaymentRequest> save(@RequestBody PaymentRequest paymentRequest) {
         paymentRequestService.save(paymentRequest);
         DetailResponse<PaymentRequest> success = ResponseUtil.detailSuccess(paymentRequest);
@@ -62,7 +59,6 @@ public class PaymentRequestController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{paymentRequestId}")
-    @AnonymousAccess
     public DetailResponse<PaymentRequest> detail(@PathVariable Long paymentRequestId) {
         PaymentRequest  paymentRequest=new PaymentRequest();
         paymentRequest.setId(paymentRequestId);
@@ -77,7 +73,6 @@ public class PaymentRequestController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{paymentRequestId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long paymentRequestId) {
         PaymentRequest	paymentRequest=new PaymentRequest();
 		paymentRequest.setId(paymentRequestId);

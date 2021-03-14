@@ -2,12 +2,6 @@ package com.github.yoma.base.modules.security.rest;
 
 import javax.servlet.http.HttpServletRequest;
 
-import cn.hutool.core.util.IdUtil;
-import com.github.yoma.core.service.BaseUserService;
-import com.github.yoma.common.exception.BadRequestException;
-import com.github.yoma.base.modules.security.security.ImgResult;
-import com.github.yoma.common.utils.StringUtils;
-import com.wf.captcha.ArithmeticCaptcha;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,20 +13,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.core.domain.CoreAccount;
-import com.github.yoma.core.service.CoreAccountService;
 import com.github.yoma.base.modules.monitor.service.RedisService;
 import com.github.yoma.base.modules.security.security.AuthInfo;
 import com.github.yoma.base.modules.security.security.AuthUser;
+import com.github.yoma.base.modules.security.security.ImgResult;
 import com.github.yoma.base.modules.security.security.JwtUser;
 import com.github.yoma.base.modules.security.service.OnlineUserService;
 import com.github.yoma.base.modules.security.utils.JwtTokenUtil;
+import com.github.yoma.common.exception.BadRequestException;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.DetailResponse;
 import com.github.yoma.common.result.ResponseUtil;
 import com.github.yoma.common.utils.SecurityUtils;
+import com.github.yoma.common.utils.StringUtils;
+import com.github.yoma.core.domain.CoreAccount;
+import com.github.yoma.core.service.BaseUserService;
+import com.github.yoma.core.service.CoreAccountService;
+import com.wf.captcha.ArithmeticCaptcha;
 
+import cn.hutool.core.util.IdUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -74,8 +73,7 @@ public class AuthenticationController {
     }
 
     // @ApiOperation("登录授权")
-    // @AnonymousAccess
-    // @PostMapping(value = "/login")
+    // // @PostMapping(value = "/login")
     // public ResponseEntity login(@Validated @RequestBody AuthUser authUser, HttpServletRequest request) {
     //
     // // 查询验证码
@@ -105,7 +103,6 @@ public class AuthenticationController {
     // return ResponseEntity.ok(new AuthInfo(token, jwtUser));
     // }
     @ApiOperation("登录授权")
-    @AnonymousAccess
     @PostMapping(value = "/login")
     public ResponseEntity<Object> login(@Validated @RequestBody AuthUser authUser, HttpServletRequest request) {
 
@@ -147,8 +144,7 @@ public class AuthenticationController {
     // }
     // @ApiOperation("获取用户信息")
     // @GetMapping(value = "/info")
-    // // @AnonymousAccess
-    // public DetailResponse<JwtUser> getUserInfo() {
+    // // // public DetailResponse<JwtUser> getUserInfo() {
     // String username = SecurityUtils.getUsername();
     // JwtUser jwtUser = (JwtUser)userDetailsService.loadUserByUsername(username);
     // DetailResponse<JwtUser> detailResponse = ResponseUtil.detailSuccess(jwtUser);
@@ -156,7 +152,6 @@ public class AuthenticationController {
     // }
 
     @ApiOperation("获取用户信息")
-    @AnonymousAccess
     @GetMapping(value = "/info")
     public ResponseEntity<Object> getUserInfo() {
         return ResponseEntity.ok(SecurityUtils.getCurrentUser());
@@ -167,7 +162,6 @@ public class AuthenticationController {
      */
     @ApiOperation(value = "注册-获取短信验证码接口")
     @PostMapping("/register/getVerifyCode")
-    @AnonymousAccess
     public CommonResponse<CoreAccount> getVerifyCode(@RequestBody CoreAccount coreAccount) {
         this.coreAccountService.sendVerifyCode(coreAccount);
         CommonResponse<CoreAccount> success = ResponseUtil.detailSuccess(coreAccount);
@@ -179,7 +173,6 @@ public class AuthenticationController {
      */
     @ApiOperation(value = "修改密码-获取短信验证码接口")
     @PostMapping("/updatePassword/getVerifyCode")
-    @AnonymousAccess
     public CommonResponse<CoreAccount> sendVerifyCodeForPassWordChange(@RequestBody CoreAccount coreAccount) {
         this.coreAccountService.sendVerifyCodeForPassWordChange(coreAccount);
         CommonResponse<CoreAccount> success = ResponseUtil.detailSuccess(coreAccount);
@@ -188,7 +181,6 @@ public class AuthenticationController {
 
     @ApiOperation(value = "身份验证-获取短信验证码接口")
     @PostMapping("/identity/getVerifyCode")
-    @AnonymousAccess
     public CommonResponse<CoreAccount> sendVerifyCodeForIdentity(@RequestBody CoreAccount coreAccount) {
         this.coreAccountService.sendVerifyCodeForIdentify(coreAccount);
         CommonResponse<CoreAccount> success = ResponseUtil.detailSuccess(coreAccount);
@@ -200,7 +192,6 @@ public class AuthenticationController {
      */
     @ApiOperation(value = "注册")
     @PostMapping("/signUp")
-    @AnonymousAccess
     public CommonResponse<CoreAccount> signUp(@RequestBody CoreAccount coreAccount) {
         coreAccountService.signUp(coreAccount);
         CommonResponse<CoreAccount> success = ResponseUtil.detailSuccess(coreAccount);
@@ -212,7 +203,6 @@ public class AuthenticationController {
      */
     @ApiOperation(value = "客户端发起的修改密码，需短信验证")
     @PostMapping("/updatePassword")
-    @AnonymousAccess
     public CommonResponse<CoreAccount> updatePassword(@RequestBody CoreAccount coreAccount) {
         coreAccountService.updatePassword(coreAccount);
         CommonResponse<CoreAccount> success = ResponseUtil.detailSuccess(coreAccount);
@@ -224,7 +214,6 @@ public class AuthenticationController {
      */
     @ApiOperation(value = "操作后台修改密码，输入账户id，原密码与新密码 验证原密码后更新密码")
     @PostMapping("/admin/updatePassword")
-    @AnonymousAccess
     public CommonResponse<CoreAccount> updatePasswordOnAdmin(@RequestBody CoreAccount coreAccount) {
         coreAccountService.updatePasswordForAdmin(coreAccount);
         CommonResponse<CoreAccount> success = ResponseUtil.detailSuccess(coreAccount);
@@ -236,7 +225,6 @@ public class AuthenticationController {
      */
     @ApiOperation(value = "测试短信发送")
     @PostMapping("/test/sms/alarm")
-    @AnonymousAccess
     public CommonResponse<CoreAccount> testsms(@RequestBody CoreAccount coreAccount) {
 
         coreAccountService.testAlarmSMS();
@@ -245,7 +233,6 @@ public class AuthenticationController {
     }
 
     @ApiOperation("获取验证码")
-    @AnonymousAccess
     @GetMapping(value = "/code")
     public ImgResult getCode() {
         // 算术类型 https://gitee.com/whvse/EasyCaptcha
@@ -260,7 +247,6 @@ public class AuthenticationController {
     }
 
     @ApiOperation("退出登录")
-    @AnonymousAccess
     @DeleteMapping(value = "/logout")
     public ResponseEntity logout(HttpServletRequest request) {
         onlineUserService.logout(jwtTokenUtil.getToken(request));

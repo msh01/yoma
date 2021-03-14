@@ -4,19 +4,6 @@
 
 package com.github.yoma.base.modules.fastdfs;
 
-import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.common.persistence.BaseController;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +12,21 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import com.github.yoma.common.persistence.BaseController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 处理文件上传
@@ -41,7 +43,6 @@ public class FileController extends BaseController {
     FastdfsService fastdfsService;
 
     @ApiOperation("文件上传")
-    @AnonymousAccess
     @PostMapping(value = "/upload")
     public Map<String, Object> upload(MultipartHttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -82,8 +83,7 @@ public class FileController extends BaseController {
     }
 
     // @ApiOperation("文件上传")
-    // @AnonymousAccess
-    // @PostMapping(value = "/upload")
+    // // @PostMapping(value = "/upload")
     // public Map<String, Object> upload(@RequestParam(value = "multipartFiles") MultipartFile[] multipartFiles) {
     // Map<String, Object> resultMap = new HashMap<String, Object>();
     // Boolean flag = true;

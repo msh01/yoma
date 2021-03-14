@@ -4,16 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.github.pagehelper.PageInfo;
-import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.order.domain.BetonReceiving;
-import com.github.yoma.order.dto.BetonReceivingQueryDTO;
-import com.github.yoma.order.service.BetonReceivingService;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.DetailResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
+import com.github.yoma.order.domain.BetonReceiving;
+import com.github.yoma.order.dto.BetonReceivingQueryDTO;
+import com.github.yoma.order.service.BetonReceivingService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +36,6 @@ public class BetonReceivingController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @PostMapping("list")
-    @AnonymousAccess
     public PageResponse<BetonReceiving> list(@RequestBody BetonReceivingQueryDTO queryDTO) {
         PageInfo<BetonReceiving> pageInfo = betonReceivingService.findPage(queryDTO);
         PageResponse<BetonReceiving> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -49,7 +47,6 @@ public class BetonReceivingController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public DetailResponse<BetonReceiving> save(@RequestBody BetonReceiving betonReceiving) {
         betonReceivingService.save(betonReceiving);
         DetailResponse<BetonReceiving> success = ResponseUtil.detailSuccess(betonReceiving);
@@ -61,7 +58,6 @@ public class BetonReceivingController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{betonReceivingId}")
-    @AnonymousAccess
     public DetailResponse<BetonReceiving> detail(@PathVariable Long betonReceivingId) {
         BetonReceiving betonReceiving = new BetonReceiving();
         betonReceiving.setId(betonReceivingId);
@@ -75,7 +71,6 @@ public class BetonReceivingController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{betonReceivingId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long betonReceivingId) {
         BetonReceiving betonReceiving = new BetonReceiving();
         betonReceiving.setId(betonReceivingId);
@@ -89,7 +84,6 @@ public class BetonReceivingController extends BaseController {
      */
     @ApiOperation("批量删除")
     @PostMapping("/batch/delete")
-    @AnonymousAccess
     public CommonResponse batchDelete(@RequestBody BatchDTO batchDTO) {
         // 获取当前操作人信息
         BetonReceivingQueryDTO queryDTO = new BetonReceivingQueryDTO();

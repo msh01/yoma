@@ -4,16 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.github.pagehelper.PageInfo;
-import com.github.yoma.common.annotation.AnonymousAccess;
-import com.github.yoma.core.domain.BaseRolesDepts;
-import com.github.yoma.core.dto.BaseRolesDeptsQueryDTO;
-import com.github.yoma.core.service.BaseRolesDeptsService;
 import com.github.yoma.common.persistence.BaseController;
 import com.github.yoma.common.persistence.BatchDTO;
 import com.github.yoma.common.result.CommonResponse;
 import com.github.yoma.common.result.DetailResponse;
 import com.github.yoma.common.result.PageResponse;
 import com.github.yoma.common.result.ResponseUtil;
+import com.github.yoma.core.domain.BaseRolesDepts;
+import com.github.yoma.core.dto.BaseRolesDeptsQueryDTO;
+import com.github.yoma.core.service.BaseRolesDeptsService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +36,6 @@ public class BaseRolesDeptsController extends BaseController {
      */
     @ApiOperation(value = " 列表查询")
     @PostMapping("list")
-    @AnonymousAccess
     public PageResponse<BaseRolesDepts> list(@RequestBody BaseRolesDeptsQueryDTO queryDTO) {
         PageInfo<BaseRolesDepts> pageInfo = baseRolesDeptsService.findPage(queryDTO);
         PageResponse<BaseRolesDepts> pageResponse = ResponseUtil.pageSuccess(pageInfo);
@@ -49,7 +47,6 @@ public class BaseRolesDeptsController extends BaseController {
      */
     @ApiOperation(value = " 保存或修改")
     @PostMapping("/save")
-    @AnonymousAccess
     public DetailResponse<BaseRolesDepts> save(@RequestBody BaseRolesDepts baseRolesDepts) {
         baseRolesDeptsService.save(baseRolesDepts);
         DetailResponse<BaseRolesDepts> success = ResponseUtil.detailSuccess(baseRolesDepts);
@@ -61,7 +58,6 @@ public class BaseRolesDeptsController extends BaseController {
      */
     @ApiOperation("详情")
     @GetMapping("/detail/{baseRolesDeptsId}")
-    @AnonymousAccess
     public DetailResponse<BaseRolesDepts> detail(@PathVariable Long baseRolesDeptsId) {
         BaseRolesDepts baseRolesDepts = new BaseRolesDepts();
         baseRolesDepts.setId(baseRolesDeptsId);
@@ -75,7 +71,6 @@ public class BaseRolesDeptsController extends BaseController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete/{baseRolesDeptsId}")
-    @AnonymousAccess
     public CommonResponse delete(@PathVariable Long baseRolesDeptsId) {
         BaseRolesDepts baseRolesDepts = new BaseRolesDepts();
         baseRolesDepts.setId(baseRolesDeptsId);
@@ -89,7 +84,6 @@ public class BaseRolesDeptsController extends BaseController {
      */
     @ApiOperation("批量删除")
     @PostMapping("/batch/delete")
-    @AnonymousAccess
     public CommonResponse batchDelete(@RequestBody BatchDTO batchDTO) {
         // 获取当前操作人信息
         BaseRolesDeptsQueryDTO queryDTO = new BaseRolesDeptsQueryDTO();

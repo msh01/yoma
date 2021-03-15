@@ -3,7 +3,7 @@ package ${package}.controller;
 import com.github.pagehelper.PageInfo;
 import ${package}.domain.${className};
 import ${package}.service.${className}Service;
-import ${package}.service.dto.${className}QueryCriteria;
+import ${package}.dto.${className}QueryDTO
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

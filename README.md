@@ -29,7 +29,7 @@ vue +element ui + axios+vuex + vue router
 
 **数据库等中间件安装+数据库的初始化**
 
-（以下安装方式基于docker。当然了，如果你不擅长docker，也可以跳过下面的说明，采用传统方式安装，方法请自行百度。）
+（*以下安装方式基于docker。当然了，如果你不擅长docker，也可以跳过下面的说明，采用传统方式安装，方法请自行百度*。）
 
 - mysql+redis + rocketmq 等中间件的安装，基于docker compose 一个启动命令搞定； 
 
@@ -71,18 +71,18 @@ docker-compose up -d
 
   ```shell
   # 命令安装没有任何报错则代表安装成功
-  npm install --global yarn
-  # npm如果安装报错的情况下可以尝试yarn。yarn安装命令如下
+  npm install 
+  # npm如果安装报错的情况下可以尝试用yarn安装。yarn安装命令如下
   # npm install --global yarn
-  # 放弃npm换用yarn进行安装
+  # 通过yarn安装所有所需依赖
   # yarn install  
   ```
 
-  
 
-- 把前端项目导入到IDEA里面，找到`package.json` 文件中的`"dev": "vue-cli-service serve",`点击左侧的三角箭头，选择`debug dev`即可完成启动。启动过程中没有任何报错信息，并自动打开登录页，则代表启动成功，
+- 把前端项目导入到IDEA里面，找到`package.json` 文件中的`"dev": "vue-cli-service serve",`点击左侧的三角箭头，选择`debug dev`
+  即可完成启动。启动过程中没有任何报错信息，并自动打开登录页，则代表启动成功，
 
-- 后台登录的账户密码为admin  / 123456
+- 后台登录的账户密码为 `admin`  / 1`23456`
 
 
 

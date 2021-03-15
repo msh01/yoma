@@ -204,7 +204,6 @@ server
 （功能已实现，文档待完善）
 
 - [Intellij IDEA配置优化最佳实践](https://github.com/msh01/awesome_intellij_idea_config)
-
 - 基于spring boot的maven 多模块的聚合继承
 - maven依赖重复导入导致bean被实例化两次无法启动的问题排查
 - spring boot整合swagger，并支持自动导出排版优美的PDF接口文档
@@ -216,6 +215,7 @@ server
 - 基于easypoi实现对复杂排版格式的excel的导出
 - spring boot+spring security+jwt实现前后端认证和鉴权
 - 基于@Aspect切面来实现对用户操作日志的自动记录
+- idea调试vue应用或者react应用的技巧
 - element ui的file-upload组件配合spring boot实现文件上传和下载
 - spring boot+logback实现按日期生成日志文件+自动删除超过30天的+日志级别（以及为什么日志文件没有自动切割的问题）
 - java表达式引擎的整合

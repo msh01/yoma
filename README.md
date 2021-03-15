@@ -94,13 +94,11 @@ docker-compose up -d
 - 小窍门：@AnonymousAccess注解加在某个controller内部某方法上代表开启此接口的匿名访问，不会被权限验证拦截。为了方便调试，可以在开发的时候加上，上线前移除
 - 前端代码拷贝时，注意目录。因为配置菜单路由时会用到
 
-#### Domain
 
 
+## 后端部署
 
-### 后端部署
-
-####  打包并把打好后jar包上传到服务器（可借助xftp或者winscp） 
+### 打包并把打好后jar包上传到服务器（可借助xftp或者winscp）
 
 在后端项目的根目录执行 `mvn package` 命令，打好的jar包在`yoma-boot`模块的target目录下
 
@@ -113,7 +111,7 @@ docker-compose up -d
 /software/apps/prod/yikong-boot-0.0.1-SNAPSHOT.jar
 ```
 
-#### 通过自动化脚本进行启动、重启、开机自启
+### 通过自动化脚本进行启动、重启、开机自启
 
 常用的启动、重启、开机自启等自动化脚本已经放在的**项目的autoshell目录**下。用工具把此脚本传输到服务器上，本人将自动化脚本放在了服务器的`/software/autoShell/` 目录下，不同的脚本，有不同的功能。
 
@@ -128,18 +126,54 @@ restartApp.sh
 severStartUp.sh
 ```
 
-#### 运行日志查看
+### 运行日志查看
 
 ```shell
 # 测试环境查看实时日志 末尾的时间换成当前时间
-tail -f /software/logs/test/sandtrading-boot/sandtrading-boot.2020-10-08.10.log
+tail -f /software/logs/test/yoma-boot/yoma-boot.2020-10-08.10.log
 # 生产环境查看实时日志 末尾的时间换成当前时间
-tail -f /software/logs/prod/sandtrading-boot/sandtrading-boot.2020-08-29.02.log
+tail -f /software/logs/prod/yoma-boot/yoma-boot.2020-08-29.02.log
 ```
 
+## 前端部署
 
+### 修改env.production文件
 
-### 前端部署
+修改其中的VUE_APP_BASE_API和VUE_APP_WS_API为生产环境中的实际地址
+
+### 打包
+
+```shell
+npm run build:prod
+```
+
+打包完成后会在根目录生成 `dist` 文件夹，我们需要将他上传到服务器中
+
+### Nginx 配置
+
+在 `nginx/conf/nginx.conf` 添加配置
+
+（默认History 模式的配置）
+
+```bash
+server
+    {
+        listen 80;
+        server_name 域名/外网IP;
+        index index.html;
+        root  /software/frontend/yoma/dist;  #dist上传的路径
+        # 避免访问出现 404 错误
+        location / {
+          try_files $uri $uri/ @router;
+          index  index.html;
+        }
+        location @router {
+          rewrite ^.*$ /index.html last;
+        }  
+    } 
+```
+
+最后记得重启nginx
 
 ## 开发计划
 

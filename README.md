@@ -201,7 +201,7 @@ server
 
 ## 进阶阅读
 
-（功能已实现，文档待完善）
+（以下文章对应的示例已经在项目中得到体现，文章待后续补充）
 
 - [Intellij IDEA配置优化最佳实践](https://github.com/msh01/awesome_intellij_idea_config)
 - 基于spring boot的maven 多模块的聚合继承

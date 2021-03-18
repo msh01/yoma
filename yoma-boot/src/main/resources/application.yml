@@ -34,6 +34,9 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 swagger:
   enabled: true
+#如果需要驼峰转换，请设置为true
+camelCaseEnable: false
+generateTargetDir: D:\yoma-generate
 task:
   pool:
     core-pool-size: 10

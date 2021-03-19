@@ -1,7 +1,7 @@
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
-#    springboot配置跨mapper xml的全局变量:
+    #    springboot配置跨mapper xml的全局变量:
     variables:
       archive-status-nomal: 1
       archive-status-deleted: 11
@@ -34,9 +34,16 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 swagger:
   enabled: true
-#如果需要驼峰转换，请设置为true
-camelCaseEnable: false
-generateTargetDir: D:\yoma-generate
+generate:
+  #   如果需要驼峰转换，请设置为true; 因为不同人的数据库表的命名习惯不同，有的是下划线，有的是驼峰。所以是否开启
+  #   列名到java属性名的驼峰转换必须是可配置的
+  camelCaseEnable: false
+  #   生成的实体是否支持jpa、mybatis-plus
+  jpaEnable: false
+  #  是否生成swagger注释
+  swaggerEnable: false
+  #  代码生成的指向的路径
+  generateTargetDir: D:\yoma-generate
 task:
   pool:
     core-pool-size: 10

@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.yoma</groupId>
-            <artifactId>yoma-common</artifactId>
+            <artifactId>yoma-tools</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

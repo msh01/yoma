@@ -13,9 +13,12 @@
 package com.github.yoma.codegen.utils;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.extra.template.*;
+import com.github.yoma.codegen.config.LocalGenerateConfig;
 import com.github.yoma.common.utils.FileUtil;
 import com.github.yoma.common.utils.StringUtils;
+import com.github.yoma.tools.utils.SpringContext;
 import lombok.extern.slf4j.Slf4j;
 import com.github.yoma.codegen.domain.GenConfig;
 import com.github.yoma.codegen.domain.ColumnInfo;
@@ -48,8 +51,8 @@ public class GenUtil {
 
     public static final String EXTRA = "auto_increment";
 
-    public static final String generateTargetDir = "D:\\yoma-generate";
-    public static final Boolean camel_case_enable = false;
+    // public static final String generateTargetDir = "D:\\yoma-generate";
+    // public static final Boolean camelCaseEnable = false;
 
     /**
      * 获取后端代码模板名称
@@ -168,12 +171,13 @@ public class GenUtil {
         Map<String, Object> genMap = getGenMap(columnInfos, genConfig);
         TemplateEngine engine =
                 TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
+        LocalGenerateConfig localGenerateConfig = SpringContext.getBean(LocalGenerateConfig.class);
         // 生成后端代码
         List<String> templates = getAdminTemplateNames();
         for (String templateName : templates) {
             Template template = engine.getTemplate("generator/admin/" + templateName + ".ftl");
             String filePath = getAdminFilePath(templateName, genConfig, genMap.get("className").toString(),
-                    generateTargetDir);
+                    localGenerateConfig.getGenerateTargetDir());
 
             assert filePath != null;
             File file = new File(filePath);
@@ -190,7 +194,7 @@ public class GenUtil {
         templates = getFrontTemplateNames();
         for (String templateName : templates) {
             Template template = engine.getTemplate("generator/front/" + templateName + ".ftl");
-            String filePath = getFrontFilePath(templateName, generateTargetDir,
+            String filePath = getFrontFilePath(templateName, localGenerateConfig.getGenerateTargetDir(),
                     genMap.get("changeClassName").toString());
 
             assert filePath != null;
@@ -273,7 +277,9 @@ public class GenUtil {
             String colType = ColUtil.cloToJava(column.getColumnType());
             // 小写开头的字段名
             String changeColumnName = null;
-            if (camel_case_enable) {
+            LocalGenerateConfig localGenerateConfig = SpringContext.getBean(LocalGenerateConfig.class);
+            Boolean camelCaseEnable = localGenerateConfig.getCamelCaseEnable();
+            if (camelCaseEnable) {
                 changeColumnName = StringUtils.toCamelCase(column.getColumnName());
             } else {
                 changeColumnName = column.getColumnName();

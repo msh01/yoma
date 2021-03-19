@@ -41,7 +41,7 @@ generate:
   #   生成的实体是否支持jpa、mybatis-plus
   jpaEnable: false
   #  是否生成swagger注释
-  swaggerEnable: false
+  swaggerEnable: true
   #  代码生成的指向的路径
   generateTargetDir: D:\yoma-generate
 task:

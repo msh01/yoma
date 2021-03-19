@@ -30,10 +30,12 @@ import java.io.Serializable;
 * @author ${author}
 * @date ${date}
 **/
-@Entity
 @Data
 @ApiModel(value = "${className}", description="${apiAlias}实体对象")
+<#if jpaEnable>
+@Entity
 @Table(name="${tableName}")
+</#if>
 public class ${className} extends DataEntity<${className}>{
 <#if columns??>
     <#list columns as column>
@@ -44,7 +46,9 @@ public class ${className} extends DataEntity<${className}>{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     </#if>
     </#if>
-    @Column(name = "${column.columnName}"<#if column.columnKey = 'UNI'>,unique = true</#if><#if column.istNotNull && column.columnKey != 'PRI'>,nullable = false</#if>)
+    <#if jpaEnable>
+        @Column(name = "${column.columnName}"<#if column.columnKey = 'UNI'>,unique = true</#if><#if column.istNotNull && column.columnKey != 'PRI'>,nullable = false</#if>)
+    </#if>
     <#if column.istNotNull && column.columnKey != 'PRI'>
         <#if column.columnType = 'String'>
     @NotBlank
@@ -59,12 +63,14 @@ public class ${className} extends DataEntity<${className}>{
     @UpdateTimestamp
     </#if>
     </#if>
-    <#if column.remark != ''>
-    @ApiModelProperty(value = "${column.remark}")
-    <#else>
-    @ApiModelProperty(value = "${column.changeColumnName}")
+    <#if swaggerEnable>
+        <#if column.remark != ''>
+            @ApiModelProperty(value = "${column.remark}")
+        <#else>
+            @ApiModelProperty(value = "${column.changeColumnName}")
+        </#if>
     </#if>
-    private ${column.columnType} ${column.changeColumnName};
+            private ${column.columnType} ${column.changeColumnName};
     </#list>
 </#if>
 

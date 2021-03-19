@@ -12,6 +12,7 @@
  */
 package com.github.yoma.codegen.utils;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.extra.template.*;
@@ -169,9 +170,11 @@ public class GenUtil {
 
     public static void generatorCode(List<ColumnInfo> columnInfos, GenConfig genConfig) throws IOException {
         Map<String, Object> genMap = getGenMap(columnInfos, genConfig);
+        LocalGenerateConfig localGenerateConfig = SpringContext.getBean(LocalGenerateConfig.class);
+        Map<String, Object> beanToMap = BeanUtil.beanToMap(localGenerateConfig);
+        genMap.putAll(beanToMap);
         TemplateEngine engine =
                 TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
-        LocalGenerateConfig localGenerateConfig = SpringContext.getBean(LocalGenerateConfig.class);
         // 生成后端代码
         List<String> templates = getAdminTemplateNames();
         for (String templateName : templates) {

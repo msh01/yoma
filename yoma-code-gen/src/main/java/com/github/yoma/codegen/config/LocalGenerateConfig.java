@@ -19,6 +19,7 @@ public class LocalGenerateConfig {
 
     private Boolean camelCaseEnable;
     private Boolean jpaEnable;
+    private Boolean swaggerEnable;
     private String generateTargetDir;
 
 }

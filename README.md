@@ -223,6 +223,8 @@ server
 - rocketmq踩空总结：同一个java服务在不同环境的消费组名称必须保证不同，否则rocketmq会采用负载均衡策略进行消费，只有33%的概率会被当前服务消费成功
 - spring boot整合极光推送
 - spring boot整合华为推送
+- @conditional 注解的妙用： 动态控制某bean在不同的环境是否实例化。例如防止定时任务重复生成，我可以在开发环境关闭，测试环境开启
+- 为什么技术选项没有用流行的mybatis plus ，而是选择了原生的mybatis
 
 ## 致谢
 

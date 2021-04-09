@@ -78,5 +78,12 @@
             </exclusions>
         </dependency>
     </dependencies>
-
+    <distributionManagement>
+        <repository>
+            <id>artifactory224</id>
+            <name>inas release</name>
+            <layout>default</layout>
+            <url>http://10.8.132.224:8081/artifactory/libs-nics/</url>
+        </repository>
+    </distributionManagement>
 </project>

@@ -1,0 +1,253 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max_allowed_packet=32505856 --default-authentication-plugin=mysql_native_password #解决外部无法访问
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Xbkj2019 #设置root 的密码
+    ports:
+      - 3307:3306 # 把容器内的3306端口，映射到容器外部的3308端口
+    volumes:
+      - /home/mydata/mysql/data/db:/var/lib/mysql #数据文件挂载
+      - /home/mydata/mysql/data/conf:/etc/mysql/conf.d #配置文件挂载
+      - /home/mydata/mysql/log:/var/log/mysql #日志文件挂载
+  redis:
+    image: redis:6.0-rc3
+    container_name: redis
+    command: redis-server --appendonly yes --requirepass ytjGqmB49z38
+    restart: always
+    volumes:
+      - /home/mydata/redis/data:/data #数据文件挂载
+    ports:
+      - 6389:6379
+  rabbitmq:
+    image: rabbitmq:3.7.15-management
+    container_name: rabbitmq
+    restart: always
+    volumes:
+      - /home/mydata/rabbitmq/data:/var/lib/rabbitmq #数据文件挂载
+      - /home/mydata/rabbitmq/log:/var/log/rabbitmq #日志文件挂载
+    ports:
+      - 5673:5672
+      - 15673:15672
+  elasticsearch:
+    image: elasticsearch:7.13.4  #镜像
+    container_name: elk_elasticsearch  #定义容器名称
+    restart: always  #开机启动，失败也会一直重启
+    environment:
+      - "cluster.name=elasticsearch" #设置集群名称为elasticsearch
+      - "discovery.type=single-node" #以单一节点模式启动
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小
+    volumes:
+      - /home/mydata/elasticsearch/plugins:/usr/share/elasticsearch/plugins #插件文件挂载
+      - /home/mydata/elasticsearch/data:/usr/share/elasticsearch/data #数据文件挂载
+    ports:
+      - 9201:9200
+      - 9301:9300
+  kibana:
+    image: kibana:7.13.4
+    container_name: elk_kibana
+    restart: always
+    depends_on:
+      - elasticsearch #kibana在elasticsearch启动之后再启动
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200 #设置访问elasticsearch的地址
+    ports:
+      - 5602:5601
+  mongo:
+    image: mongo:4.0
+    container_name: mongo
+    restart: always
+    environment:
+      #      These variables, used in conjunction, create a new user and set that user's password.
+      #      This user is created in the admin authentication database and given the role of root,
+      #      which is a "superuser" role.
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: dz6mQp8z
+    volumes:
+      - /home/mydata/mongo/db:/data/db #数据文件挂载
+      - /home/mydata/mongo/example_db:/data/example_db
+      - /home/mydata/mongo/logs:/data/logs
+      - /home/mydata/mongo/etc/mongod.conf:/etc/mongod.conf
+    ports:
+      - 27018:27017
+  #  #  zookeeper:
+  #  #    image: wurstmeister/zookeeper
+  #  #    restart: always
+  #  #    hostname: zoo1
+  #  #    container_name: like-zookeeper-1
+  #  #    #domainname:
+  #  #    ports:
+  #  #      - 2182:2181
+  #  #    volumes:
+  #  #      - /home/mydata/zookeeper/zoo1/data:/data
+  #  #      - /home/mydata/zookeeper/zoo1/datalog:/datalog
+  #
+  #  #  kafka:
+  #  #    image: wurstmeister/kafka
+  #  #    ports:
+  #  #      - "9093:9092"
+  #  #    # host name your docker machine ip
+  #  #    environment:
+  #  #      KAFKA_ADVERTISED_HOST_NAME: "39.108.125.252"
+  #  #      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #  #    restart: always
+  #  #    volumes:
+  #  #      - ./docker.sock:/var/run/docker.sock
+  #  #    depends_on:
+  #  #      - zookeeper
+  #  #  报错解决方式：https://github.com/emqx/emqx-docker/issues/89  （尝试过，chmod chown均不顶用）
+  #  #  emqx:
+  #  #    image: emqx/emqx
+  #  #    container_name: emqx
+  #  #    restart: always
+  #  #    ports:
+  #  #      - "18084:18083"
+  #  #      - "1884:1883"
+  #  #      - "8085:8084"
+  #  #      - "8884:8883"
+  #  #      - "8084:8083"
+  #  #    volumes:
+  #  #      - /home/mydata/emqx/log:/opt/emqx/log
+  #  #      - /home/mydata/emqx/data:/opt/emqx/data
+  #  #      - /home/mydata/emqx/lib:/opt/emqx/lib
+  #  #      - /home/mydata/emqx/lib:/opt/emqx/etc
+  #  #  三个 docker 容器将会一起编排，可以直接使用容器名代替容器 ip，如这里 nameserver 容器名 rmqnamesrv。
+  #  #  （容器名+端口访问有问题，后续待处理）
+  #  #  解决『rmqbroker exited with code 253』  的问题
+  #  #  chown 3000:3000 -R /home/mydata/rocketmq  #（宿主机的挂载目录）
+  #  #  chown 3000:3000 -R /home/mydata/rocketmq  #（宿主机的挂载目录）
+  #  #  rocketmq_namesrv:
+  #  #    image: foxiswho/rocketmq:server
+  #  #    container_name: rmqnamesrv
+  #  #    restart: always
+  #  #    ports:
+  #  #      - 50506:9876
+  #  #    volumes:
+  #  #      - /home/mydata/rocketmq/logs:/home/rocketmq/logs
+  #  #      - /home/mydata/rocketmq/store:/home/rocketmq/store
+  #  #  #    command: sh mqnamesrv
+  #  #  rocketmq_broker:
+  #  #    image: foxiswho/rocketmq:broker
+  #  #    container_name: rmqbroker
+  #  #    restart: always
+  #  #    #    而其他两个端口是根据listenPort的值，动态计算出来的。这三个端口由Broker内部不同的组件使用，作用分别如下：
+  #  #    #    remotingServer：监听listenPort配置项指定的监听端口，默认10911
+  #  #    #    fastRemotingServer：监听端口值listenPort-2，即默认为10909
+  #  #    #    HAService：监听端口为值为listenPort+1，即10912，该端口用于Broker的主从同步
+  #  #    ports:
+  #  #      - 50501:50501
+  #  #      - 50503:50503
+  #  #      - 50504:50504
+  #  #    volumes:
+  #  #      - /home/mydata/rocketmq/logs:/opt/logs
+  #  #      - /home/mydata/rocketmq/store:/opt/store
+  #  #      - /home/mydata/rocketmq/conf/broker.conf:/etc/rocketmq/broker.conf
+  #  #    #    command: mqbroker -c /etc/rocketmq/broker.conf -Drocketmq.client.logRoot=/opt/logs/test -Drocketmq.client.logLevel=error
+  #  #    command: mqbroker -c /etc/rocketmq/broker.conf
+  #  #    depends_on:
+  #  #      - rocketmq_namesrv
+  #  #    environment:
+  #  #      NAMESRV_ADDR: "172.16.100.24:50506"
+  #  #      JAVA_OPTS: " -Duser.home=/opt"
+  #  #      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
+  #  #  rocketmq_console:
+  #  #    image: styletang/rocketmq-console-ng
+  #  #    container_name: rocketmq-console-ng
+  #  #    restart: always
+  #  #    ports:
+  #  #      - 50505:8080
+  #  #    depends_on:
+  #  #      - rocketmq_namesrv
+  #  #    environment:
+  #  #      - JAVA_OPTS= -Dlogging.level.root=info   -Drocketmq.namesrv.addr=172.16.100.24:50506
+  #  #      - Dcom.rocketmq.sendMessageWithVIPChannel=false
+  #  #  Unable to update instance pid: Unable to create directory /nexus-data/instances   报错解决方式：chmod 777 -R /home/mydata/nexus3/
+  #  #  Default user is admin and the uniquely generated password can be found
+  #  #  in the admin.password file inside the volume. See Persistent Data for information about the volume.
+  #  # 细节可参考 https://xinxiamu.github.io/2018/12/30/maven-nexus-jar/
+  #  nexus3:
+  #    image: sonatype/nexus3:3.18.1
+  #    container_name: nexus3
+  #    restart: always
+  #    volumes:
+  #      - /home/mydata/nexus3/data:/nexus-data
+  #    ports:
+  #      - 50581:8081
+  #    environment:
+  #      TZ: Asia/Shanghai
+  #    logging:
+  #      driver: "json-file"
+  #      options:
+  #        max-size: "200k"
+  #        max-file: "10"
+  #    deploy:
+  #      resources:
+  #        limits:
+  #          cpus: '0.50'
+  #          memory: 500M
+  #
+  postgres:
+    image: postgres
+    container_name: postgresql
+    restart: always
+    environment:
+      #      POSTGRES_DB: iot
+      POSTGRES_USER: jetlinks
+      POSTGRES_PASSWORD: jetlinks
+    ports:
+      - 6432:5432
+    volumes:
+      - /home/mydata/postgresql/data:/var/lib/postgresql/data
+
+#  gitlab:
+#    image: 'twang2218/gitlab-ce-zh:11.1.4'
+#    restart: unless-stopped
+#    hostname: 'gitlab.dev.x-code.top'
+#    container_name: gitlab
+#    environment:
+#      TZ: 'Asia/Shanghai'
+#      GITLAB_OMNIBUS_CONFIG: |
+#        gitlab_rails['smtp_enable'] = true
+#        gitlab_rails['gitlab_email_from'] = 'dept@x-code.top'
+#        gitlab_rails['gitlab_email_display_name'] = 'x-code.top'
+#        gitlab_rails['gitlab_email_reply_to'] = 'dept@x-code.top'
+#        gitlab_rails['smtp_address'] = "smtp.mxhichina.com"
+#        gitlab_rails['smtp_port'] = 465
+#        gitlab_rails['smtp_user_name'] = "dept@x-code.top"
+#        gitlab_rails['smtp_password'] = "hJ20201117"
+#        gitlab_rails['smtp_domain'] = "mxhichina.com"
+#        gitlab_rails['smtp_authentication'] = "login"
+#        gitlab_rails['smtp_enable_starttls_auto'] = true
+#        gitlab_rails['smtp_tls'] = true
+#        unicorn['worker_memory_limit_min'] = "400 * 1 << 20"
+#        unicorn['worker_memory_limit_max'] = "650 * 1 << 20"
+#    ports:
+#      - '50588:80'
+#      - '50443:443'
+#      - '50022:22'
+#    volumes:
+#      - /home/mydata/gitlab/config:/etc/gitlab
+#      - /home/mydata/gitlab/data:/var/opt/gitlab
+#      - /home/mydata/gitlab/logs:/var/log/gitlab
+#
+#  yoma-boot:
+#    image: yoma/yoma-boot:latest
+#    container_name: yoma-boot
+#    restart: always
+##    networks:
+##      - sc-net
+#    ports:
+#      - 8283:8282
+##    env_file: .env
+#    environment:
+#      TZ: Asia/Shanghai
+#    volumes:
+#      - /software/logs-docker:/software/logs
+#    depends_on:
+#      - mysql
+#      - redis
+#      - mongo
+#      - nginx

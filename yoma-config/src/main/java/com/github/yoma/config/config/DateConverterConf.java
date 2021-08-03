@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -48,6 +49,8 @@ public class DateConverterConf {
 
         javaTimeModule.addDeserializer(LocalDateTime.class, new MyLocalDateTimeDeserializer());
 
+
+        om.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);//大小写脱敏 默认为false  需要改为true
         om.registerModule(javaTimeModule);
         // 用于解决java.time 模块的时间序列化为json时变成数组的问题
         om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
